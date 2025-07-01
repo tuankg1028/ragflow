@@ -20,6 +20,7 @@ import random
 import re
 import sys
 import threading
+import time
 from copy import deepcopy
 from io import BytesIO
 from timeit import default_timer as timer
@@ -39,6 +40,7 @@ from rag.app.picture import vision_llm_chunk as picture_vision_llm_chunk
 from rag.nlp import rag_tokenizer
 from rag.prompts import vision_llm_describe_prompt
 from rag.settings import PARALLEL_DEVICES
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 LOCK_KEY_pdfplumber = "global_shared_lock_pdfplumber"
 if LOCK_KEY_pdfplumber not in sys.modules:
@@ -1283,11 +1285,14 @@ class VisionParser(RAGFlowPdfParser):
 
     def __images__(self, fnm, zoomin=3, page_from=0, page_to=299, callback=None):
         try:
+            start = time.time()
             with sys.modules[LOCK_KEY_pdfplumber]:
                 self.pdf = pdfplumber.open(fnm) if isinstance(
                     fnm, str) else pdfplumber.open(BytesIO(fnm))
                 self.page_images = [p.to_image(resolution=72 * zoomin).annotated for i, p in
                                     enumerate(self.pdf.pages[page_from:page_to])]
+                logging.info(f"Rendered {len(self.page_images)} pages in {time.time() - start:.2f} seconds")
+
                 self.total_page = len(self.pdf.pages)
         except Exception:
             self.page_images = None
@@ -1300,28 +1305,55 @@ class VisionParser(RAGFlowPdfParser):
         self.__images__(fnm=filename, zoomin=3, page_from=from_page, page_to=to_page, **kwargs)
 
         total_pdf_pages = self.total_page
-
         start_page = max(0, from_page)
         end_page = min(to_page, total_pdf_pages)
 
         all_docs = []
 
-        for idx, img_binary in enumerate(self.page_images or []):
-            pdf_page_num = idx  # 0-based
-            if pdf_page_num < start_page or pdf_page_num >= end_page:
-                continue
+        def process_page(idx_img_tuple):
+            idx, img_binary = idx_img_tuple
+            page_num = idx
+            if page_num < start_page or page_num >= end_page:
+                return None
 
-            docs = picture_vision_llm_chunk(
-                binary=img_binary,
-                vision_model=self.vision_model,
-                prompt=vision_llm_describe_prompt(page=pdf_page_num+1),
-                callback=callback,
-            )
+            start_time = time.time()
+            logging.info(f"Starting to process page {page_num + 1}")
+            
+            try:
+                doc = picture_vision_llm_chunk(
+                    binary=img_binary,
+                    vision_model=self.vision_model,
+                    prompt=vision_llm_describe_prompt(page=page_num + 1),
+                    callback=callback,
+                )
+                end_time = time.time()
+                processing_time = end_time - start_time
+                logging.info(f"Completed processing page {page_num + 1} in {processing_time:.2f} seconds")
+                return doc
+            except Exception as e:
+                end_time = time.time()
+                processing_time = end_time - start_time
+                logging.exception(f"Error processing page {page_num + 1} after {processing_time:.2f} seconds")
+                return None
 
-            if docs:
-                all_docs.append(docs)
+        max_workers = kwargs.get("max_workers", 4)  
+        start_total = time.time()
+        logging.info(f"Starting parallel processing of {len(self.page_images or [])} pages with {max_workers} workers")
+        
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:
+            futures = [executor.submit(process_page, (idx, img))
+                    for idx, img in enumerate(self.page_images or [])]
+
+            for future in as_completed(futures):
+                result = future.result()
+                if result:
+                    all_docs.append(result)
+
+        end_total = time.time()
+        total_time = end_total - start_total
+        logging.info(f"Completed processing all pages in {total_time:.2f} seconds. Successfully processed {len(all_docs)} pages.")
+
         return [(doc, "") for doc in all_docs], []
-
 
 if __name__ == "__main__":
     pass
