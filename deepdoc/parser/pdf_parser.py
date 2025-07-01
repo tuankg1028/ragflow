@@ -1336,7 +1336,7 @@ class VisionParser(RAGFlowPdfParser):
                 logging.exception(f"Error processing page {page_num + 1} after {processing_time:.2f} seconds")
                 return None
 
-        max_workers = kwargs.get("max_workers", 4)  
+        max_workers = kwargs.get("max_workers", 6)  
         start_total = time.time()
         logging.info(f"Starting parallel processing of {len(self.page_images or [])} pages with {max_workers} workers")
         
