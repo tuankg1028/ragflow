@@ -62,7 +62,7 @@ RUN --mount=type=cache,id=ragflow_apt,target=/var/cache/apt,sharing=locked \
     apt install -y python3-pip pipx nginx unzip curl wget git vim less && \
     apt install -y ghostscript && \
     apt install -y tesseract-ocr && \
-    apt install -y tesseract-ocr-vie \ 
+    apt install -y tesseract-ocr-vie && \ 
     apt install -y poppler-utils
     
 RUN if [ "$NEED_MIRROR" == "1" ]; then \
