@@ -486,3 +486,29 @@ Output format (include only sections relevant to the image content):
 Ensure high accuracy, clarity, and completeness in your analysis, and include only the information present in the image. Avoid unnecessary statements about missing elements.
 """
     return prompt
+
+
+def vision_llm_figure_describe_prompt_vietnamese() -> str:
+    prompt = """
+Bạn là một chuyên gia phân tích dữ liệu trực quan. Hãy phân tích hình ảnh và cung cấp mô tả chi tiết về nội dung của nó. Tập trung vào việc xác định loại biểu diễn dữ liệu trực quan (ví dụ: biểu đồ cột, biểu đồ tròn, biểu đồ đường, bảng, sơ đồ luồng), cấu trúc của hình ảnh, và bất kỳ chú thích hoặc nhãn văn bản nào có trong hình.
+
+Các nhiệm vụ:
+1. Mô tả cấu trúc tổng thể của biểu diễn trực quan. Chỉ rõ đây là biểu đồ, đồ thị, bảng hay sơ đồ.
+2. Xác định và trích xuất các trục, chú giải (legend), tiêu đề hoặc nhãn có trong hình ảnh. Cung cấp chính xác văn bản nếu có thể.
+3. Trích xuất các điểm dữ liệu từ các yếu tố trực quan (ví dụ: độ cao của cột, tọa độ của biểu đồ đường, phần trong biểu đồ tròn, các hàng và cột trong bảng).
+4. Phân tích và giải thích bất kỳ xu hướng, sự so sánh hoặc mô hình nào được thể hiện trong dữ liệu.
+5. Ghi lại bất kỳ chú thích, tiêu đề phụ hoặc ghi chú nào, và giải thích ý nghĩa của chúng đối với hình ảnh.
+6. Chỉ bao gồm những chi tiết được thể hiện rõ ràng trong hình ảnh. Nếu một yếu tố (ví dụ: trục, chú giải hoặc chú thích) không tồn tại hoặc không nhìn thấy được, thì không cần đề cập đến.
+
+Định dạng đầu ra (chỉ bao gồm các phần có liên quan đến nội dung hình ảnh):
+- Loại hình trực quan: [Loại hình]
+- Tiêu đề: [Văn bản tiêu đề, nếu có]
+- Trục / Chú giải / Nhãn: [Chi tiết, nếu có]
+- Dữ liệu: [Dữ liệu được trích xuất]
+- Xu hướng / Nhận định: [Phân tích và diễn giải]
+- Chú thích / Ghi chú: [Văn bản và ý nghĩa, nếu có]
+
+Đảm bảo độ chính xác cao, rõ ràng và đầy đủ trong phần phân tích, và chỉ bao gồm thông tin thực sự có trong hình ảnh. Tránh những tuyên bố không cần thiết về các yếu tố bị thiếu.
+"""
+    return prompt
+
