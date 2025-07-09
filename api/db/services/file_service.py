@@ -401,6 +401,18 @@ class FileService(CommonService):
     @classmethod
     @DB.connection_context()
     def upload_document(self, kb, file_objs, user_id):
+        # Upload documents and extract metadata
+        # Args:
+        #     kb: Knowledge base object
+        #     file_objs: List of file objects to upload
+        #     user_id: User ID of the uploader
+        # Returns:
+        #     Tuple of (error_list, uploaded_files)
+
+        # Import LLM services for metadata extraction
+        from api.db.services.llm_service import LLMBundle
+        from api.db import LLMType
+
         root_folder = self.get_root_folder(user_id)
         pf_id = root_folder["id"]
         self.init_knowledgebase_docs(pf_id, user_id)
@@ -438,6 +450,21 @@ class FileService(CommonService):
                     thumbnail_location = f"thumbnail_{doc_id}.png"
                     STORAGE_IMPL.put(kb.id, thumbnail_location, img)
 
+                # Extract document content for metadata analysis
+                document_text = ""
+                try:
+                    # Parse document content for metadata extraction
+                    parsed_content = self.parse_docs([file], user_id)
+                    document_text = parsed_content[:4000]  # Limit text for LLM processing
+                except Exception as e:
+                    print(f"Failed to parse document content for metadata: {str(e)}")
+
+                # Extract metadata using LLM
+                metadata = {}
+                if document_text.strip():
+                    llm_bundle = LLMBundle(kb.tenant_id, LLMType.CHAT, kb.llm_id if hasattr(kb, 'llm_id') else None)
+                    metadata = self.extract_metadata_with_llm(document_text, llm_bundle)
+
                 doc = {
                     "id": doc_id,
                     "kb_id": kb.id,
@@ -449,6 +476,7 @@ class FileService(CommonService):
                     "location": location,
                     "size": len(blob),
                     "thumbnail": thumbnail_location,
+                    "meta_fields": metadata  # Store extracted metadata
                 }
                 DocumentService.insert(doc)
 
@@ -462,6 +490,8 @@ class FileService(CommonService):
     @staticmethod
     def parse_docs(file_objs, user_id):
         from rag.app import audio, email, naive, picture, presentation
+        import tempfile
+        import os
 
         def dummy(prog=None, msg=""):
             pass
@@ -470,15 +500,37 @@ class FileService(CommonService):
         parser_config = {"chunk_token_num": 16096, "delimiter": "\n!?;。；！？", "layout_recognize": "Plain Text"}
         exe = ThreadPoolExecutor(max_workers=12)
         threads = []
+        
         for file in file_objs:
             kwargs = {"lang": "English", "callback": dummy, "parser_config": parser_config, "from_page": 0, "to_page": 100000, "tenant_id": user_id}
             filetype = filename_type(file.filename)
+            
+            # Reset file pointer to beginning
+            file.seek(0)
             blob = file.read()
-            threads.append(exe.submit(FACTORY.get(FileService.get_parser(filetype, file.filename, ""), naive).chunk, file.filename, blob, **kwargs))
+            
+            # Create temporary file for parsers that need file path
+            with tempfile.NamedTemporaryFile(delete=False, suffix=os.path.splitext(file.filename)[1]) as tmp_file:
+                tmp_file.write(blob)
+                tmp_file_path = tmp_file.name
+            
+            try:
+                threads.append(exe.submit(FACTORY.get(FileService.get_parser(filetype, file.filename, ""), naive).chunk, tmp_file_path, blob, **kwargs))
+            except Exception as e:
+                # Clean up temp file if thread creation fails
+                if os.path.exists(tmp_file_path):
+                    os.unlink(tmp_file_path)
+                raise e
 
         res = []
-        for th in threads:
-            res.append("\n".join([ck["content_with_weight"] for ck in th.result()]))
+        temp_files = []
+        for i, th in enumerate(threads):
+            try:
+                result = th.result()
+                res.append("\n".join([ck["content_with_weight"] for ck in result]))
+            except Exception as e:
+                logging.warning(f"Failed to parse file: {str(e)}")
+                res.append("")  # Add empty string for failed parsing
 
         return "\n\n".join(res)
 
@@ -493,3 +545,81 @@ class FileService(CommonService):
         if re.search(r"\.(eml)$", filename):
             return ParserType.EMAIL.value
         return default
+
+    @classmethod
+    def extract_metadata_with_llm(cls, document_text, llm_bundle):
+        """Extract metadata from document content using LLM"""
+        metadata_prompt = """Bạn là hệ thống phân tích nội dung để chuẩn hóa tài liệu cho một hệ thống AI xử lý tri thức nội bộ.  
+Dưới đây là nội dung tài liệu cần phân tích:
+
+[DOCUMENT_START]
+{document_text}
+[DOCUMENT_END]
+
+Hãy trả về thông tin dưới dạng JSON với cấu trúc chính xác sau (tất cả giá trị phải được viết bằng tiếng Việt):
+
+{{
+  "domain": "Lĩnh vực tổng quát, ví dụ: E-commerce, Healthcare, Education, Finance",
+  "industry": "Ngành nghề cụ thể, ví dụ: Thực phẩm nhập khẩu & phân phối bán lẻ, Y tế trực tuyến",
+  "knowledge_type": "Loại kiến thức, ví dụ: Product Knowledge / Customer Handling Script / FAQ / Training Material",
+  "role_target": ["Vai trò 1", "Vai trò 2", "..."],
+  "tone": "Giọng điệu của tài liệu, ví dụ: Tự nhiên, gợi cảm hứng, chuyên nghiệp, không dùng buzzword",
+  "context_user": {{
+    "intent": "Ý định của người dùng khi sử dụng tài liệu này",
+    "behavior": "Hành vi đặc trưng của đối tượng sử dụng",
+    "channel": "Kênh sử dụng tài liệu, ví dụ: Email, Zalo chat, Điện thoại"
+  }},
+  "keywords": ["từ khóa 1", "từ khóa 2", "..."],
+  "version": "Phiên bản tài liệu, ví dụ: v1.0, v2.1",
+  "suggested_tags": ["thẻ 1", "thẻ 2", "..."],
+  "summary": "Tóm tắt ngắn gọn về nội dung và mục đích của tài liệu",
+  "language": "vi"
+}}
+
+Lưu ý: Tất cả nội dung trong JSON phải được viết bằng tiếng Việt, trừ trường "language" luôn là "vi".""".format(document_text=document_text[:4000])  # Limit text length
+
+        try:
+            response_text = llm_bundle.chat("", [{"role": "user", "content": metadata_prompt}], {})
+            import json
+            import re
+            
+            # Try to extract JSON from markdown code blocks first
+            json_match = re.search(r'```(?:json)?\s*(\{.*?\})\s*```', response_text, re.DOTALL)
+            if json_match:
+                json_str = json_match.group(1)
+            else:
+                # Fallback: look for JSON without markdown formatting
+                json_start = response_text.find('{')
+                json_end = response_text.rfind('}') + 1
+                if json_start >= 0 and json_end > json_start:
+                    json_str = response_text[json_start:json_end]
+                else:
+                    raise ValueError("No JSON found in response")
+            
+            # Clean up the JSON string
+            json_str = json_str.strip()
+            metadata = json.loads(json_str)
+            print(f"Successfully parsed metadata: {metadata}")
+            return metadata
+                
+        except Exception as e:
+            logging.warning(f"Failed to extract metadata with LLM: {str(e)}")
+        
+        # Return default metadata if extraction fails (following exact format)
+        return {
+            "domain": "Tổng quát",
+            "industry": "Không xác định",
+            "knowledge_type": "Tài liệu nội bộ",
+            "role_target": ["Người dùng chung"],
+            "tone": "Chuyên nghiệp, trang trọng",
+            "context_user": {
+                "intent": "Tham khảo thông tin",
+                "behavior": "Tìm kiếm thông tin cần thiết",
+                "channel": "Hệ thống nội bộ"
+            },
+            "keywords": [],
+            "version": "v1.0",
+            "suggested_tags": ["Tài liệu", "Tham khảo"],
+            "summary": "Tài liệu tham khảo chung cho hệ thống nội bộ",
+            "language": "vi"
+        }
