@@ -462,7 +462,7 @@ class FileService(CommonService):
                     print(f"Failed to parse document content for metadata: {str(e)}")
 
                 # Extract user_type from file representation or use default
-                user_type = "alaska"  # default
+                user_type = "random"  # default
                 try:
                     # Try to extract user_type from file string representation
                     file_str = str(file)
