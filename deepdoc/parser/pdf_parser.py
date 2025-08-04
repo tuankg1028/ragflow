@@ -697,16 +697,25 @@ class RAGFlowPdfParser:
                 self.boxes.pop(i)
                 lst_lout_no = lout_no
                 continue
+            # if need_image and self.boxes[i]["layout_type"] == "figure":
+            #     if re.match(r"(数据|资料|图表)*来源[:： ]", self.boxes[i]["text"]):
+            #         self.boxes.pop(i)
+            #         continue
+            #     if lout_no not in figures:
+            #         figures[lout_no] = []
+            #     figures[lout_no].append(self.boxes[i])
+            #     self.boxes.pop(i)
+            #     lst_lout_no = lout_no
+            #     continue
             if need_image and self.boxes[i]["layout_type"] == "figure":
-                if re.match(r"(数据|资料|图表)*来源[:： ]", self.boxes[i]["text"]):
-                    self.boxes.pop(i)
-                    continue
+                self.boxes[i]["text"] = ""
                 if lout_no not in figures:
                     figures[lout_no] = []
                 figures[lout_no].append(self.boxes[i])
                 self.boxes.pop(i)
                 lst_lout_no = lout_no
                 continue
+
             i += 1
 
         # merge table on different pages
