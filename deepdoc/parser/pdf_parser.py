@@ -1141,11 +1141,11 @@ class RAGFlowPdfParser:
 
     def __call__(self, fnm, need_image=True, zoomin=3, return_html=False):
         self.__images__(fnm, zoomin)
-        self._layouts_rec(zoomin)
+        # self._layouts_rec(zoomin)
         self._table_transformer_job(zoomin)
-        self._text_merge()
-        self._concat_downward()
-        self._filter_forpages()
+        # self._text_merge()
+        # self._concat_downward()
+        # self._filter_forpages()
         tbls = self._extract_table_figure(
             need_image, zoomin, return_html, False)
         return self.__filterout_scraps(deepcopy(self.boxes), zoomin), tbls
