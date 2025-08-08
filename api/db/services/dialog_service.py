@@ -220,11 +220,9 @@ def chat(dialog, messages, stream=True, **kwargs):
         if langfuse.auth_check():
             langfuse_tracer = langfuse
             langfuse.trace = langfuse_tracer.trace(
-                name=f"{dialog.name}-{llm_model_config['llm_name']}",
-                metadata={
-                    "session_id": kwargs.get("langfuse_session_id"),
-                    "original_question": messages[-1]["content"],
-                }
+                name=f"refine-{dialog.name}",
+                input=messages[-1]["content"],
+                session_id=kwargs.get("langfuse_session_id"),
             )
 
     check_langfuse_tracer_ts = timer()
