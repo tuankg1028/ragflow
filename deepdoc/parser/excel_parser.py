@@ -105,7 +105,7 @@ class RAGFlowExcelParser:
 
         return tb_chunks
 
-    def __call__(self, fnm, max_workers=6):
+    def __call__(self, fnm, max_workers=3):
         file_like_object = BytesIO(fnm) if not isinstance(fnm, str) else fnm
         wb = RAGFlowExcelParser._load_excel_to_workbook(file_like_object)
 
