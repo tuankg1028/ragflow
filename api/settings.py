@@ -74,6 +74,9 @@ SANDBOX_HOST = None
 
 BUILTIN_EMBEDDING_MODELS = ["BAAI/bge-large-zh-v1.5@BAAI", "maidalun1020/bce-embedding-base_v1@Youdao"]
 
+# Environment-based OpenAI keys configuration
+ENVIRONMENT_OPENAI_KEYS = {}
+
 # Memory configuration
 MEM0_CONFIG = None
 MEMORY_ENABLED = True
@@ -99,7 +102,7 @@ def get_or_create_secret_key():
 
 
 def init_settings():
-    global LLM, LLM_FACTORY, LLM_BASE_URL, LIGHTEN, DATABASE_TYPE, DATABASE, FACTORY_LLM_INFOS, REGISTER_ENABLED
+    global LLM, LLM_FACTORY, LLM_BASE_URL, LIGHTEN, DATABASE_TYPE, DATABASE, FACTORY_LLM_INFOS, REGISTER_ENABLED, ENVIRONMENT_OPENAI_KEYS
     LIGHTEN = int(os.environ.get("LIGHTEN", "0"))
     DATABASE_TYPE = os.getenv("DB_TYPE", "mysql")
     DATABASE = decrypt_database_config(name=DATABASE_TYPE)
@@ -183,6 +186,9 @@ def init_settings():
     global MEM0_CONFIG, MEMORY_ENABLED
     MEM0_CONFIG = get_base_config("mem0", {})
     MEMORY_ENABLED = MEM0_CONFIG.get("enabled", False)
+    
+    # Load environment-specific OpenAI keys
+    ENVIRONMENT_OPENAI_KEYS = get_base_config("environment_openai_keys", {})
 
 
 class CustomEnum(Enum):

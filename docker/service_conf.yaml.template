@@ -29,6 +29,12 @@ redis:
   password: '${REDIS_PASSWORD:-infini_rag_flow}'
   host: '${REDIS_HOST:-redis}:${REDIS_PORT:-6379}'
 
+environment_openai_keys:
+  dev: '${OPENAI_API_KEY_DEV:-sk-dev-key-placeholder}'
+  staging: '${OPENAI_API_KEY_STAGING:-sk-staging-key-placeholder}'
+  prod: '${OPENAI_API_KEY_PROD:-sk-prod-key-placeholder}'
+  kafi: '${OPENAI_API_KEY_KAFI:-sk-kafi-key-placeholder}'
+
 # postgres:
 #   name: '${POSTGRES_DBNAME:-rag_flow}'
 #   user: '${POSTGRES_USER:-rag_flow}'

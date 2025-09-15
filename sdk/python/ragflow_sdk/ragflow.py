@@ -31,21 +31,35 @@ class RAGFlow:
         self.user_key = api_key
         self.api_url = f"{base_url}/api/{version}"
         self.authorization_header = {"Authorization": "{} {}".format("Bearer", self.user_key)}
+        self.environment = None
+
+    def set_environment(self, environment):
+        """Set the environment for API requests (dev, staging, prod, kafi, or None to disable)."""
+        if environment and environment not in ['dev', 'staging', 'prod', 'kafi']:
+            raise ValueError("Environment must be one of: 'dev', 'staging', 'prod', 'kafi', or None")
+        self.environment = environment
+
+    def _get_headers(self):
+        """Get headers with optional X-Environment header."""
+        headers = self.authorization_header.copy()
+        if self.environment:
+            headers['X-Environment'] = self.environment
+        return headers
 
     def post(self, path, json=None, stream=False, files=None):
-        res = requests.post(url=self.api_url + path, json=json, headers=self.authorization_header, stream=stream, files=files)
+        res = requests.post(url=self.api_url + path, json=json, headers=self._get_headers(), stream=stream, files=files)
         return res
 
     def get(self, path, params=None, json=None):
-        res = requests.get(url=self.api_url + path, params=params, headers=self.authorization_header, json=json)
+        res = requests.get(url=self.api_url + path, params=params, headers=self._get_headers(), json=json)
         return res
 
     def delete(self, path, json):
-        res = requests.delete(url=self.api_url + path, json=json, headers=self.authorization_header)
+        res = requests.delete(url=self.api_url + path, json=json, headers=self._get_headers())
         return res
 
     def put(self, path, json):
-        res = requests.put(url=self.api_url + path, json=json, headers=self.authorization_header)
+        res = requests.put(url=self.api_url + path, json=json, headers=self._get_headers())
         return res
 
     def create_dataset(

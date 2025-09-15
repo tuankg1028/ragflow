@@ -168,3 +168,90 @@ RAGFlow is a comprehensive RAG (Retrieval-Augmented Generation) platform with th
 - Horizontal scaling via multiple task executors
 - Configurable worker count via `WS` environment variable
 - Load balancing support through Docker Compose
+
+## Environment-Based OpenAI Key Tracking
+
+RAGFlow supports environment-based OpenAI API key management, allowing different OpenAI keys to be used based on the deployment environment. This enables separate API quotas and keys for development, staging, production, and kafi environments.
+
+### Supported Environments
+- **dev**: Development environment
+- **staging**: Staging environment  
+- **prod**: Production environment
+- **kafi**: Kafi environment
+
+### Configuration
+
+#### 1. Server Configuration
+Add environment-specific OpenAI keys to `docker/service_conf.yaml`:
+
+```yaml
+environment_openai_keys:
+  dev: 'sk-your-dev-key'
+  staging: 'sk-your-staging-key'
+  prod: 'sk-your-prod-key'
+  kafi: 'sk-your-kafi-key'
+```
+
+#### 2. Environment Variables (Optional)
+Set environment variables for automatic key loading:
+
+```bash
+export OPENAI_API_KEY_DEV='sk-your-dev-key'
+export OPENAI_API_KEY_STAGING='sk-your-staging-key'
+export OPENAI_API_KEY_PROD='sk-your-prod-key'
+export OPENAI_API_KEY_KAFI='sk-your-kafi-key'
+```
+
+### SDK Usage
+
+#### Python SDK
+```python
+from ragflow_sdk import RAGFlow
+
+# Initialize client
+ragflow = RAGFlow("your-api-key", "http://localhost:9380")
+
+# Set environment for all subsequent requests
+ragflow.set_environment("dev")  # Uses dev OpenAI key
+
+# Create dataset - will use dev OpenAI key for OpenAI models
+dataset = ragflow.create_dataset(
+    name="my-dataset",
+    embedding_model="text-embedding-3-small@OpenAI"
+)
+
+# Switch to production environment
+ragflow.set_environment("prod")  # Now uses prod OpenAI key
+
+# Disable environment tracking
+ragflow.set_environment(None)  # Uses normal tenant keys
+```
+
+### Implementation Details
+
+#### Request Flow
+1. **Client**: SDK sets `X-Environment` header (e.g., `X-Environment: dev`)
+2. **Backend**: `api/utils/api_utils.py` extracts environment from header
+3. **Key Selection**: `api/db/services/llm_service.py` detects OpenAI requests and returns environment-specific key
+4. **Model Usage**: OpenAI models use environment key, others use normal tenant lookup
+
+#### Key Components
+- **`docker/service_conf.yaml.template`**: Environment key configuration
+- **`api/settings.py`**: Loads `ENVIRONMENT_OPENAI_KEYS` from config
+- **`api/utils/api_utils.py`**: Environment detection utilities
+- **`api/db/services/llm_service.py`**: Environment-aware key selection
+- **`sdk/python/ragflow_sdk/ragflow.py`**: SDK environment support
+
+### Features
+- **Selective Application**: Only affects OpenAI models (llm_factory='OpenAI')
+- **Backward Compatibility**: Existing code works without modification
+- **Fallback Safety**: Missing environment keys fall back to tenant lookup
+- **Input Validation**: Only accepts valid environments (dev/staging/prod/kafi)
+- **Logging**: Environment key usage is logged for tracking
+
+### Example Usage
+See `sdk/python/environment_example.py` for comprehensive usage examples including:
+- Environment switching
+- Configuration setup
+- Error handling
+- Integration patterns

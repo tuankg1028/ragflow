@@ -602,6 +602,19 @@ def get_mcp_tools(mcp_servers: list[MCPServer], timeout: float | int = 10) -> tu
         return {}, str(e)
 
 
+def get_request_environment():
+    """Extract environment from X-Environment header in Flask request."""
+    environment = flask_request.headers.get('X-Environment')
+    if environment and environment in ['dev', 'staging', 'prod', 'kafi']:
+        return environment
+    return None
+
+
+def is_openai_request(llm_factory):
+    """Check if the request is for OpenAI models."""
+    return llm_factory == 'OpenAI'
+
+
 TimeoutException = Union[Type[BaseException], BaseException]
 OnTimeoutCallback = Union[Callable[..., Any], Coroutine[Any, Any, Any]]
 def timeout(

@@ -18,6 +18,7 @@ import logging
 from langfuse import Langfuse
 
 from api import settings
+from api.utils.api_utils import get_request_environment, is_openai_request
 from api.db import LLMType
 from api.db.db_models import DB, LLM, LLMFactories, TenantLLM
 from api.db.services.common_service import CommonService
@@ -41,6 +42,29 @@ class TenantLLMService(CommonService):
     @DB.connection_context()
     def get_api_key(cls, tenant_id, model_name):
         mdlnm, fid = TenantLLMService.split_model_name_and_factory(model_name)
+        
+        # Check for environment-specific OpenAI key first
+        environment = get_request_environment()
+        if environment and is_openai_request(fid):
+            env_key = settings.ENVIRONMENT_OPENAI_KEYS.get(environment)
+            if env_key:
+                logging.info(f"Using environment-specific OpenAI key for environment: {environment}")
+                # Create a mock TenantLLM object with environment-specific key
+                mock_tenant_llm = type('MockTenantLLM', (), {
+                    'api_key': env_key,
+                    'llm_factory': fid,
+                    'llm_name': mdlnm,
+                    'api_base': '',
+                    'to_dict': lambda: {
+                        'api_key': env_key,
+                        'llm_factory': fid,
+                        'llm_name': mdlnm,
+                        'api_base': ''
+                    }
+                })()
+                return mock_tenant_llm
+        
+        # Fall back to original tenant key lookup
         if not fid:
             objs = cls.query(tenant_id=tenant_id, llm_name=mdlnm)
         else:
