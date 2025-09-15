@@ -417,7 +417,7 @@ def init_kb(row, vector_size: int):
     return settings.docStoreConn.createIdx(idxnm, row.get("kb_id", ""), vector_size)
 
 
-@timeout(60*20)
+@timeout(60*50)
 async def embedding(docs, mdl, parser_config=None, callback=None):
     if parser_config is None:
         parser_config = {}
