@@ -1,10 +1,10 @@
-import { RAGFlowNodeType } from '@/interfaces/database/agent';
+import { LuminationNodeType } from '@/interfaces/database/agent';
 import { isEmpty } from 'lodash';
 import { useMemo } from 'react';
 import { initialTavilyValues } from '../../constant';
 import { convertToObjectArray } from '../../utils';
 
-export function useValues(node?: RAGFlowNodeType) {
+export function useValues(node?: LuminationNodeType) {
   const values = useMemo(() => {
     const formData = node?.data?.form;
 

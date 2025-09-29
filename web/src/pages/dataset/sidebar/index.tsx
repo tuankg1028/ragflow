@@ -1,4 +1,4 @@
-import { RAGFlowAvatar } from '@/components/ragflow-avatar';
+import { LuminationAvatar } from '@/components/lumination-avatar';
 import { Button } from '@/components/ui/button';
 import { useSecondPathName } from '@/hooks/route-hook';
 import { useFetchKnowledgeBaseConfiguration } from '@/hooks/use-knowledge-request';
@@ -44,11 +44,11 @@ export function SideBar({ refreshCount }: PropType) {
   return (
     <aside className="relative p-5 space-y-8">
       <div className="flex gap-2.5 max-w-[200px] items-center">
-        <RAGFlowAvatar
+        <LuminationAvatar
           avatar={data.avatar}
           name={data.name}
           className="size-16"
-        ></RAGFlowAvatar>
+        ></LuminationAvatar>
         <div className=" text-text-sub-title text-xs space-y-1">
           <h3 className="text-lg font-semibold line-clamp-1 text-text-title">
             {data.name}

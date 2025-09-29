@@ -7,7 +7,7 @@ import {
 } from '@/components/ui/sheet';
 import { useTranslate } from '@/hooks/common-hooks';
 import { IModalProps } from '@/interfaces/common';
-import { RAGFlowNodeType } from '@/interfaces/database/flow';
+import { LuminationNodeType } from '@/interfaces/database/flow';
 import { cn } from '@/lib/utils';
 import { lowerFirst } from 'lodash';
 import { Play, X } from 'lucide-react';
@@ -23,7 +23,7 @@ import SingleDebugDrawer from './single-debug-drawer';
 import { useFormConfigMap } from './use-form-config-map';
 
 interface IProps {
-  node?: RAGFlowNodeType;
+  node?: LuminationNodeType;
   singleDebugDrawerVisible: IModalProps<any>['visible'];
   hideSingleDebugDrawer: IModalProps<any>['hideModal'];
   showSingleDebugDrawer: IModalProps<any>['showModal'];

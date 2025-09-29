@@ -21,11 +21,11 @@ import CheckboxSets from './components/chunk-result-bar/checkbox-sets';
 import DocumentHeader from './components/document-preview/document-header';
 
 import { PageHeader } from '@/components/page-header';
-import message from '@/components/ui/message';
 import {
-  RAGFlowPagination,
-  RAGFlowPaginationType,
-} from '@/components/ui/ragflow-pagination';
+  LuminationPagination,
+  LuminationPaginationType,
+} from '@/components/ui/lumination-pagination';
+import message from '@/components/ui/message';
 import { Spin } from '@/components/ui/spin';
 import {
   QueryStringMap,
@@ -65,7 +65,7 @@ const Chunk = () => {
   useEffect(() => {
     setChunkList(data);
   }, [data]);
-  const onPaginationChange: RAGFlowPaginationType['onChange'] = (
+  const onPaginationChange: LuminationPaginationType['onChange'] = (
     page,
     size,
   ) => {
@@ -244,14 +244,14 @@ const Chunk = () => {
                   </div>
                 </div>
                 <div className={styles.pageFooter}>
-                  <RAGFlowPagination
+                  <LuminationPagination
                     pageSize={pagination.pageSize}
                     current={pagination.current}
                     total={total}
                     onChange={(page, pageSize) => {
                       onPaginationChange(page, pageSize);
                     }}
-                  ></RAGFlowPagination>
+                  ></LuminationPagination>
                 </div>
               </div>
             </Spin>

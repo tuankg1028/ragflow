@@ -48,14 +48,14 @@ import {
 } from '../utils';
 import SingleDebugDrawer from './single-debug-drawer';
 
-import { RAGFlowNodeType } from '@/interfaces/database/flow';
+import { LuminationNodeType } from '@/interfaces/database/flow';
 import { FlowFormContext } from '../context';
 import { RunTooltip } from '../flow-tooltip';
 import IterationForm from '../form/iteration-from';
 import styles from './index.less';
 
 interface IProps {
-  node?: RAGFlowNodeType;
+  node?: LuminationNodeType;
   singleDebugDrawerVisible: IModalProps<any>['visible'];
   hideSingleDebugDrawer: IModalProps<any>['hideModal'];
   showSingleDebugDrawer: IModalProps<any>['showModal'];

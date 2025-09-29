@@ -1,5 +1,5 @@
 import { ModelVariableType } from '@/constants/knowledge';
-import { RAGFlowNodeType } from '@/interfaces/database/flow';
+import { LuminationNodeType } from '@/interfaces/database/flow';
 import { get, isEmpty, isPlainObject, omit } from 'lodash';
 import { useMemo } from 'react';
 import { buildCategorizeListFromObject } from '../../utils';
@@ -15,7 +15,7 @@ const defaultValues = {
   items: [],
 };
 
-export function useValues(node?: RAGFlowNodeType) {
+export function useValues(node?: LuminationNodeType) {
   const values = useMemo(() => {
     const formData = node?.data?.form;
     if (isEmpty(formData)) {

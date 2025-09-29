@@ -8,7 +8,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { RAGFlowSelect } from '@/components/ui/select';
+import { LuminationSelect } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { FormTooltip } from '@/components/ui/tooltip';
@@ -93,11 +93,11 @@ function BeginForm({ node }: INextOperatorForm) {
             <FormItem>
               <FormLabel tooltip={t('flow.modeTip')}>Mode</FormLabel>
               <FormControl>
-                <RAGFlowSelect
+                <LuminationSelect
                   placeholder={t('common.pleaseSelect')}
                   options={ModeOptions}
                   {...field}
-                ></RAGFlowSelect>
+                ></LuminationSelect>
               </FormControl>
               <FormMessage />
             </FormItem>

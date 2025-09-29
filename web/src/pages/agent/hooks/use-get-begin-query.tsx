@@ -1,6 +1,6 @@
 import { AgentGlobals } from '@/constants/agent';
 import { useFetchAgent } from '@/hooks/use-agent-request';
-import { RAGFlowNodeType } from '@/interfaces/database/flow';
+import { LuminationNodeType } from '@/interfaces/database/flow';
 import { Edge } from '@xyflow/react';
 import { DefaultOptionType } from 'antd/es/select';
 import { isEmpty } from 'lodash';
@@ -164,7 +164,7 @@ export const useBuildVariableOptions = (nodeId?: string, parentId?: string) => {
   return options;
 };
 
-export function useBuildQueryVariableOptions(n?: RAGFlowNodeType) {
+export function useBuildQueryVariableOptions(n?: LuminationNodeType) {
   const { data } = useFetchAgent();
   const node = useContext(AgentFormContext) || n;
   const options = useBuildVariableOptions(node?.id, node?.parentId);
@@ -192,7 +192,7 @@ export function useBuildComponentIdOptions(nodeId?: string, parentId?: string) {
 
   // Limit the nodes inside iteration to only reference peer nodes with the same parentId and other external nodes other than their parent nodes
   const filterChildNodesToSameParentOrExternal = useCallback(
-    (node: RAGFlowNodeType) => {
+    (node: LuminationNodeType) => {
       // Node inside iteration
       if (parentId) {
         return (

@@ -19,7 +19,7 @@ import {
   ICategorizeForm,
   IRelevantForm,
   ISwitchForm,
-  RAGFlowNodeType,
+  LuminationNodeType,
 } from '@/interfaces/database/flow';
 import { setChatVariableEnabledFieldValuePage } from '@/utils/chat';
 import { message } from 'antd';
@@ -544,7 +544,7 @@ export const useCopyPaste = () => {
     (event: ClipboardEvent) => {
       const nodes = JSON.parse(
         event.clipboardData?.getData('agent:nodes') || '[]',
-      ) as RAGFlowNodeType[] | undefined;
+      ) as LuminationNodeType[] | undefined;
 
       if (Array.isArray(nodes) && nodes.length) {
         event.preventDefault();

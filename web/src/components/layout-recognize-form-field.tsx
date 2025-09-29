@@ -11,7 +11,7 @@ import {
   FormLabel,
   FormMessage,
 } from './ui/form';
-import { RAGFlowSelect } from './ui/select';
+import { LuminationSelect } from './ui/select';
 
 export const enum DocumentType {
   DeepDOC = 'DeepDOC',
@@ -79,7 +79,10 @@ export function LayoutRecognizeFormField() {
               </FormLabel>
               <div className="w-3/4">
                 <FormControl>
-                  <RAGFlowSelect {...field} options={options}></RAGFlowSelect>
+                  <LuminationSelect
+                    {...field}
+                    options={options}
+                  ></LuminationSelect>
                 </FormControl>
               </div>
             </div>

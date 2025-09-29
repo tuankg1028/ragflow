@@ -10,9 +10,9 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { BlurInput } from '@/components/ui/input';
-import { RAGFlowSelect } from '@/components/ui/select';
+import { LuminationSelect } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
-import { RAGFlowNodeType } from '@/interfaces/database/flow';
+import { LuminationNodeType } from '@/interfaces/database/flow';
 import { X } from 'lucide-react';
 import { ReactNode } from 'react';
 import { useFieldArray, useFormContext } from 'react-hook-form';
@@ -20,7 +20,7 @@ import { useTranslation } from 'react-i18next';
 import { useBuildQueryVariableOptions } from '../../hooks/use-get-begin-query';
 
 interface IProps {
-  node?: RAGFlowNodeType;
+  node?: LuminationNodeType;
   name?: string;
   isOutputs: boolean;
 }
@@ -74,11 +74,11 @@ export function DynamicVariableForm({ name = 'arguments', isOutputs }: IProps) {
                 <FormItem className="flex-1 overflow-hidden">
                   <FormControl>
                     {isOutputs ? (
-                      <RAGFlowSelect
+                      <LuminationSelect
                         placeholder={t('common.pleaseSelect')}
                         options={TypeOptions}
                         {...field}
-                      ></RAGFlowSelect>
+                      ></LuminationSelect>
                     ) : (
                       <SelectWithSearch
                         options={nextOptions}

@@ -1,4 +1,4 @@
-import { RAGFlowNodeType } from '@/interfaces/database/flow';
+import { LuminationNodeType } from '@/interfaces/database/flow';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { Button, Form, Input, Select } from 'antd';
 import { useTranslation } from 'react-i18next';
@@ -7,7 +7,7 @@ import { FormCollapse } from '../components/dynamic-input-variable';
 
 type DynamicInputVariableProps = {
   name?: string;
-  node?: RAGFlowNodeType;
+  node?: LuminationNodeType;
 };
 
 export const DynamicInputVariable = ({

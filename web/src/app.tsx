@@ -53,7 +53,7 @@ const queryClient = new QueryClient();
 type Locale = ConfigProviderProps['locale'];
 
 function Root({ children }: React.PropsWithChildren) {
-  const { theme: themeragflow } = useTheme();
+  const { theme: themeLumination } = useTheme();
   const getLocale = (lng: string) =>
     AntLanguageMap[lng as keyof typeof AntLanguageMap] ?? enUS;
 
@@ -72,7 +72,7 @@ function Root({ children }: React.PropsWithChildren) {
             fontFamily: 'Inter',
           },
           algorithm:
-            themeragflow === 'dark'
+            themeLumination === 'dark'
               ? theme.darkAlgorithm
               : theme.defaultAlgorithm,
         }}
@@ -101,7 +101,7 @@ const RootProvider = ({ children }: React.PropsWithChildren) => {
   return (
     <TooltipProvider>
       <QueryClientProvider client={queryClient}>
-        <ThemeProvider defaultTheme="light" storageKey="ragflow-ui-theme">
+        <ThemeProvider defaultTheme="light" storageKey="lumination-ui-theme">
           <Root>{children}</Root>
         </ThemeProvider>
       </QueryClientProvider>

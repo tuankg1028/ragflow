@@ -7,7 +7,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { RAGFlowSelect } from '@/components/ui/select';
+import { LuminationSelect } from '@/components/ui/select';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { INextOperatorForm } from '../../interface';
@@ -90,10 +90,10 @@ const QWeatherForm = ({ form, node }: INextOperatorForm) => {
             <FormItem>
               <FormLabel>{t('flow.lang')}</FormLabel>
               <FormControl>
-                <RAGFlowSelect
+                <LuminationSelect
                   {...field}
                   options={qWeatherLangOptions}
-                ></RAGFlowSelect>
+                ></LuminationSelect>
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -106,10 +106,10 @@ const QWeatherForm = ({ form, node }: INextOperatorForm) => {
             <FormItem>
               <FormLabel>{t('flow.type')}</FormLabel>
               <FormControl>
-                <RAGFlowSelect
+                <LuminationSelect
                   {...field}
                   options={qWeatherTypeOptions}
-                ></RAGFlowSelect>
+                ></LuminationSelect>
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -122,10 +122,10 @@ const QWeatherForm = ({ form, node }: INextOperatorForm) => {
             <FormItem>
               <FormLabel>{t('flow.userType')}</FormLabel>
               <FormControl>
-                <RAGFlowSelect
+                <LuminationSelect
                   {...field}
                   options={qWeatherUserTypeOptions}
-                ></RAGFlowSelect>
+                ></LuminationSelect>
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -139,10 +139,10 @@ const QWeatherForm = ({ form, node }: INextOperatorForm) => {
               <FormItem>
                 <FormLabel>{t('flow.timePeriod')}</FormLabel>
                 <FormControl>
-                  <RAGFlowSelect
+                  <LuminationSelect
                     {...field}
                     options={getQWeatherTimePeriodOptions()}
-                  ></RAGFlowSelect>
+                  ></LuminationSelect>
                 </FormControl>
                 <FormMessage />
               </FormItem>

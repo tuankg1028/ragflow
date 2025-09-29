@@ -8,7 +8,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { RAGFlowSelect } from '@/components/ui/select';
+import { LuminationSelect } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -145,7 +145,7 @@ const DebugContent = ({
               <FormItem className="flex-1">
                 <FormLabel>{props.label}</FormLabel>
                 <FormControl>
-                  <RAGFlowSelect
+                  <LuminationSelect
                     allowClear
                     options={
                       q.options?.map((x) => ({
@@ -154,7 +154,7 @@ const DebugContent = ({
                       })) ?? []
                     }
                     {...field}
-                  ></RAGFlowSelect>
+                  ></LuminationSelect>
                 </FormControl>
                 <FormMessage />
               </FormItem>

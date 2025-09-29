@@ -11,7 +11,7 @@ import {
   FormLabel,
 } from '@/components/ui/form';
 import { Input, NumberInput } from '@/components/ui/input';
-import { RAGFlowSelect } from '@/components/ui/select';
+import { LuminationSelect } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { buildOptions } from '@/utils/form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -212,7 +212,7 @@ function AgentForm({ node }: INextOperatorForm) {
                 <FormItem className="flex-1">
                   <FormLabel>Exception method</FormLabel>
                   <FormControl>
-                    <RAGFlowSelect
+                    <LuminationSelect
                       {...field}
                       options={exceptionMethodOptions}
                     />

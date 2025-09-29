@@ -1,4 +1,7 @@
-import { ISwitchCondition, RAGFlowNodeType } from '@/interfaces/database/flow';
+import {
+  ISwitchCondition,
+  LuminationNodeType,
+} from '@/interfaces/database/flow';
 import { useUpdateNodeInternals } from '@xyflow/react';
 import get from 'lodash/get';
 import { useEffect, useMemo } from 'react';
@@ -10,7 +13,7 @@ export const useBuildSwitchHandlePositions = ({
   id,
 }: {
   id: string;
-  data: RAGFlowNodeType['data'];
+  data: LuminationNodeType['data'];
 }) => {
   const updateNodeInternals = useUpdateNodeInternals();
 

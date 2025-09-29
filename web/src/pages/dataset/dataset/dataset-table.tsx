@@ -15,7 +15,7 @@ import * as React from 'react';
 
 import { ChunkMethodDialog } from '@/components/chunk-method-dialog';
 import { RenameDialog } from '@/components/rename-dialog';
-import { RAGFlowPagination } from '@/components/ui/ragflow-pagination';
+import { LuminationPagination } from '@/components/ui/lumination-pagination';
 import {
   Table,
   TableBody,
@@ -166,13 +166,13 @@ export function DatasetTable({
       </Table>
       <div className="flex items-center justify-end  py-4">
         <div className="space-x-2">
-          <RAGFlowPagination
+          <LuminationPagination
             {...pick(pagination, 'current', 'pageSize')}
             total={pagination.total}
             onChange={(page, pageSize) => {
               setPagination({ page, pageSize });
             }}
-          ></RAGFlowPagination>
+          ></LuminationPagination>
         </div>
       </div>
       {changeParserVisible && (

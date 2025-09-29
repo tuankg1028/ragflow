@@ -174,21 +174,21 @@ export {
   SelectValue,
 };
 
-export type RAGFlowSelectOptionType = {
+export type LuminationSelectOptionType = {
   label: React.ReactNode;
   value: string;
   disabled?: boolean;
   icon?: React.ReactNode;
 };
 
-export type RAGFlowSelectGroupOptionType = {
+export type LuminationSelectGroupOptionType = {
   label: React.ReactNode;
-  options: RAGFlowSelectOptionType[];
+  options: LuminationSelectOptionType[];
 };
 
-export type RAGFlowSelectProps = Partial<ControllerRenderProps> & {
+export type LuminationSelectProps = Partial<ControllerRenderProps> & {
   FormControlComponent?: typeof FormControl;
-  options?: (RAGFlowSelectOptionType | RAGFlowSelectGroupOptionType)[];
+  options?: (LuminationSelectOptionType | LuminationSelectGroupOptionType)[];
   allowClear?: boolean;
   placeholder?: React.ReactNode;
   contentProps?: React.ComponentPropsWithoutRef<typeof SelectPrimitive.Content>;
@@ -212,9 +212,9 @@ export type RAGFlowSelectProps = Partial<ControllerRenderProps> & {
  * }
  * @return {*}
  */
-export const RAGFlowSelect = forwardRef<
+export const LuminationSelect = forwardRef<
   React.ElementRef<typeof SelectPrimitive.Trigger>,
-  RAGFlowSelectProps
+  LuminationSelectProps
 >(function (
   {
     value: initialValue,
@@ -263,14 +263,14 @@ export const RAGFlowSelect = forwardRef<
   const label = React.useMemo(() => {
     let nextOptions = options;
     if (options.some((x) => !('value' in x))) {
-      nextOptions = (options as RAGFlowSelectGroupOptionType[]).reduce<
-        RAGFlowSelectOptionType[]
+      nextOptions = (options as LuminationSelectGroupOptionType[]).reduce<
+        LuminationSelectOptionType[]
       >((pre, cur) => {
         return pre.concat(cur?.options ?? []);
       }, []);
     }
 
-    const option = (nextOptions as RAGFlowSelectOptionType[]).find(
+    const option = (nextOptions as LuminationSelectOptionType[]).find(
       (x) => x.value === value,
     );
 
@@ -295,7 +295,7 @@ export const RAGFlowSelect = forwardRef<
           if ('value' in o) {
             return (
               <SelectItem
-                value={o.value as RAGFlowSelectOptionType['value']}
+                value={o.value as LuminationSelectOptionType['value']}
                 key={o.value}
                 disabled={o.disabled}
               >
@@ -323,4 +323,10 @@ export const RAGFlowSelect = forwardRef<
   );
 });
 
-RAGFlowSelect.displayName = 'RAGFlowSelect';
+LuminationSelect.displayName = 'LuminationSelect';
+
+// Backward compatibility exports
+export const RAGFlowSelect = LuminationSelect;
+export type RAGFlowSelectOptionType = LuminationSelectOptionType;
+export type RAGFlowSelectGroupOptionType = LuminationSelectGroupOptionType;
+export type RAGFlowSelectProps = LuminationSelectProps;

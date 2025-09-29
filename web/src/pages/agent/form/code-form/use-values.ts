@@ -1,6 +1,6 @@
 import { ProgrammingLanguage } from '@/constants/agent';
 import { ICodeForm } from '@/interfaces/database/agent';
-import { RAGFlowNodeType } from '@/interfaces/database/flow';
+import { LuminationNodeType } from '@/interfaces/database/flow';
 import { isEmpty } from 'lodash';
 import { useMemo } from 'react';
 import { initialCodeValues } from '../../constant';
@@ -28,7 +28,7 @@ function convertOutputsToArray({ lang, outputs = {} }: ICodeForm) {
   }, {} as OutputsFormType);
 }
 
-export function useValues(node?: RAGFlowNodeType) {
+export function useValues(node?: LuminationNodeType) {
   const values = useMemo(() => {
     const formData = node?.data?.form;
 

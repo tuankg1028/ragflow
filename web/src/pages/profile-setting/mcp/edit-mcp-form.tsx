@@ -12,7 +12,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { RAGFlowSelect } from '@/components/ui/select';
+import { LuminationSelect } from '@/components/ui/select';
 import { IModalProps } from '@/interfaces/common';
 import { buildOptions } from '@/utils/form';
 import { Editor, loader } from '@monaco-editor/react';
@@ -126,7 +126,7 @@ export function EditMcpForm({
             <FormItem>
               <FormLabel>{t('mcp.serverType')}</FormLabel>
               <FormControl>
-                <RAGFlowSelect
+                <LuminationSelect
                   {...field}
                   autoComplete="off"
                   options={ServerTypeOptions}

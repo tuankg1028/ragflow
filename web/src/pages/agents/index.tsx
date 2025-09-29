@@ -1,7 +1,7 @@
 import ListFilterBar from '@/components/list-filter-bar';
 import { RenameDialog } from '@/components/rename-dialog';
 import { Button } from '@/components/ui/button';
-import { RAGFlowPagination } from '@/components/ui/ragflow-pagination';
+import { LuminationPagination } from '@/components/ui/lumination-pagination';
 import { useNavigatePage } from '@/hooks/logic-hooks/navigate-hooks';
 import { useFetchAgentListByPage } from '@/hooks/use-agent-request';
 import { pick } from 'lodash';
@@ -57,11 +57,11 @@ export default function Agent() {
         })}
       </div>
       <div className="mt-8 px-8">
-        <RAGFlowPagination
+        <LuminationPagination
           {...pick(pagination, 'current', 'pageSize')}
           total={pagination.total}
           onChange={handlePageChange}
-        ></RAGFlowPagination>
+        ></LuminationPagination>
       </div>
       {agentRenameVisible && (
         <RenameDialog

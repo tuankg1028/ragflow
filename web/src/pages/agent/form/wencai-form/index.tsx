@@ -7,7 +7,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { RAGFlowSelect } from '@/components/ui/select';
+import { LuminationSelect } from '@/components/ui/select';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { INextOperatorForm } from '../../interface';
@@ -41,7 +41,7 @@ const WenCaiForm = ({ form, node }: INextOperatorForm) => {
             <FormItem>
               <FormLabel>{t('flow.queryType')}</FormLabel>
               <FormControl>
-                <RAGFlowSelect {...field} options={wenCaiQueryTypeOptions} />
+                <LuminationSelect {...field} options={wenCaiQueryTypeOptions} />
               </FormControl>
               <FormMessage />
             </FormItem>

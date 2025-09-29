@@ -8,7 +8,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { MultiSelect } from '@/components/ui/multi-select';
-import { RAGFlowSelect } from '@/components/ui/select';
+import { LuminationSelect } from '@/components/ui/select';
 import { buildOptions } from '@/utils/form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useCallback, useMemo } from 'react';
@@ -87,14 +87,14 @@ export const StringTransformForm = ({ node }: INextOperatorForm) => {
               <FormItem>
                 <FormLabel>method</FormLabel>
                 <FormControl>
-                  <RAGFlowSelect
+                  <LuminationSelect
                     {...field}
                     options={buildOptions(StringTransformMethod)}
                     onChange={(value) => {
                       handleMethodChange(value);
                       field.onChange(value);
                     }}
-                  ></RAGFlowSelect>
+                  ></LuminationSelect>
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -136,10 +136,10 @@ export const StringTransformForm = ({ node }: INextOperatorForm) => {
                       {...field}
                     />
                   ) : (
-                    <RAGFlowSelect
+                    <LuminationSelect
                       {...field}
                       options={DelimiterOptions}
-                    ></RAGFlowSelect>
+                    ></LuminationSelect>
                   )}
                 </FormControl>
                 <FormMessage />

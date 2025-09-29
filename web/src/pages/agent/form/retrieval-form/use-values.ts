@@ -1,9 +1,9 @@
-import { RAGFlowNodeType } from '@/interfaces/database/flow';
+import { LuminationNodeType } from '@/interfaces/database/flow';
 import { isEmpty } from 'lodash';
 import { useMemo } from 'react';
 import { initialRetrievalValues } from '../../constant';
 
-export function useValues(node?: RAGFlowNodeType) {
+export function useValues(node?: LuminationNodeType) {
   const defaultValues = useMemo(
     () => ({
       ...initialRetrievalValues,

@@ -1,10 +1,10 @@
-import { RAGFlowNodeType } from '@/interfaces/database/flow';
+import { LuminationNodeType } from '@/interfaces/database/flow';
 import { isEmpty } from 'lodash';
 import { useMemo } from 'react';
 import { initialUserFillUpValues } from '../../constant';
 import { buildBeginInputListFromObject } from '../begin-form/utils';
 
-export function useValues(node?: RAGFlowNodeType) {
+export function useValues(node?: LuminationNodeType) {
   const values = useMemo(() => {
     const formData = node?.data?.form;
 

@@ -1,7 +1,7 @@
 import ListFilterBar from '@/components/list-filter-bar';
 import { RenameDialog } from '@/components/rename-dialog';
 import { Button } from '@/components/ui/button';
-import { RAGFlowPagination } from '@/components/ui/ragflow-pagination';
+import { LuminationPagination } from '@/components/ui/lumination-pagination';
 import { useFetchNextKnowledgeListByPage } from '@/hooks/use-knowledge-request';
 import { pick } from 'lodash';
 import { Plus } from 'lucide-react';
@@ -81,11 +81,11 @@ export default function Datasets() {
         })}
       </div>
       <div className="mt-8 px-8">
-        <RAGFlowPagination
+        <LuminationPagination
           {...pick(pagination, 'current', 'pageSize')}
           total={total}
           onChange={handlePageChange}
-        ></RAGFlowPagination>
+        ></LuminationPagination>
       </div>
       {visible && (
         <DatasetCreatingDialog

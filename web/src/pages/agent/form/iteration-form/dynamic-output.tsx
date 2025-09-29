@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
-import { RAGFlowNodeType } from '@/interfaces/database/flow';
+import { LuminationNodeType } from '@/interfaces/database/flow';
 import { X } from 'lucide-react';
 import { ReactNode, useCallback, useMemo } from 'react';
 import { useFieldArray, useFormContext } from 'react-hook-form';
@@ -19,7 +19,7 @@ import { useTranslation } from 'react-i18next';
 import { useBuildSubNodeOutputOptions } from './use-build-options';
 
 interface IProps {
-  node?: RAGFlowNodeType;
+  node?: LuminationNodeType;
 }
 
 export function DynamicOutputForm({ node }: IProps) {

@@ -25,7 +25,7 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
-import { RAGFlowSelectOptionType } from '../ui/select';
+import { LuminationSelectOptionType } from '../ui/select';
 
 const countries = [
   {
@@ -71,7 +71,7 @@ const countries = [
 
 export type SelectWithSearchFlagOptionType = {
   label: string;
-  options: RAGFlowSelectOptionType[];
+  options: LuminationSelectOptionType[];
 };
 
 export type SelectWithSearchFlagProps = {

@@ -10,7 +10,7 @@ import {
   FormItem,
   FormMessage,
 } from '@/components/ui/form';
-import { RAGFlowSelect } from '@/components/ui/select';
+import { LuminationSelect } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/utils';
@@ -156,7 +156,7 @@ function ConditionCards({
                     render={({ field }) => (
                       <FormItem>
                         <FormControl>
-                          <RAGFlowSelect
+                          <LuminationSelect
                             {...field}
                             options={switchOperatorOptions}
                             onlyShowSelectedIcon
@@ -267,7 +267,7 @@ const SwitchForm = ({ node }: IOperatorForm) => {
                     render={({ field }) => (
                       <FormItem>
                         <FormControl>
-                          <RAGFlowSelect
+                          <LuminationSelect
                             {...field}
                             options={switchLogicOperatorOptions}
                             triggerClassName="w-18"

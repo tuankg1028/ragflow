@@ -36,7 +36,7 @@ export default function RetrievalTesting() {
       <section className="flex justify-between items-center">
         <TopTitle
           title={'Retrieval testing'}
-          description={`Conduct a retrieval test to check if RAGFlow can recover the intended content for the LLM.`}
+          description={`Conduct a retrieval test to check if Lumination can recover the intended content for the LLM.`}
         ></TopTitle>
         {/* <Button>Save as Preset</Button> */}
       </section>

@@ -1,4 +1,4 @@
-import { RAGFlowNodeType } from '@/interfaces/database/flow';
+import { LuminationNodeType } from '@/interfaces/database/flow';
 import type {} from '@redux-devtools/extension';
 import {
   Connection,
@@ -33,30 +33,30 @@ import {
 import { deleteAllDownstreamAgentsAndTool } from './utils/delete-node';
 
 export type RFState = {
-  nodes: RAGFlowNodeType[];
+  nodes: LuminationNodeType[];
   edges: Edge[];
   selectedNodeIds: string[];
   selectedEdgeIds: string[];
   clickedNodeId: string; // currently selected node
   clickedToolId: string; // currently selected tool id
-  onNodesChange: OnNodesChange<RAGFlowNodeType>;
+  onNodesChange: OnNodesChange<LuminationNodeType>;
   onEdgesChange: OnEdgesChange;
   onEdgeMouseEnter?: EdgeMouseHandler<Edge>;
   /** This event handler is called when mouse of a user leaves an edge */
   onEdgeMouseLeave?: EdgeMouseHandler<Edge>;
   onConnect: OnConnect;
-  setNodes: (nodes: RAGFlowNodeType[]) => void;
+  setNodes: (nodes: LuminationNodeType[]) => void;
   setEdges: (edges: Edge[]) => void;
   setEdgesByNodeId: (nodeId: string, edges: Edge[]) => void;
   updateNodeForm: (
     nodeId: string,
     values: any,
     path?: (string | number)[],
-  ) => RAGFlowNodeType[];
+  ) => LuminationNodeType[];
   onSelectionChange: OnSelectionChangeFunc;
-  addNode: (nodes: RAGFlowNodeType) => void;
-  getNode: (id?: string | null) => RAGFlowNodeType | undefined;
-  updateNode: (node: RAGFlowNodeType) => void;
+  addNode: (nodes: LuminationNodeType) => void;
+  getNode: (id?: string | null) => LuminationNodeType | undefined;
+  updateNode: (node: LuminationNodeType) => void;
   addEdge: (connection: Connection) => void;
   getEdge: (id: string) => Edge | undefined;
   updateFormDataOnConnect: (connection: Connection) => void;
@@ -75,7 +75,7 @@ export type RFState = {
   deleteAgentToolNodeById: (id: string) => void;
   deleteIterationNodeById: (id: string) => void;
   deleteEdgeBySourceAndSourceHandle: (connection: Partial<Connection>) => void;
-  findNodeByName: (operatorName: Operator) => RAGFlowNodeType | undefined;
+  findNodeByName: (operatorName: Operator) => LuminationNodeType | undefined;
   updateMutableNodeFormItem: (id: string, field: string, value: any) => void;
   getOperatorTypeFromId: (id?: string | null) => string | undefined;
   getParentIdById: (id?: string | null) => string | undefined;
@@ -83,14 +83,14 @@ export type RFState = {
   generateNodeName: (name: string) => string;
   setClickedNodeId: (id?: string) => void;
   setClickedToolId: (id?: string) => void;
-  findUpstreamNodeById: (id?: string | null) => RAGFlowNodeType | undefined;
+  findUpstreamNodeById: (id?: string | null) => LuminationNodeType | undefined;
 };
 
 // this is our useStore hook that we can use in our components to get parts of the store and call actions
 const useGraphStore = create<RFState>()(
   devtools(
     immer((set, get) => ({
-      nodes: [] as RAGFlowNodeType[],
+      nodes: [] as LuminationNodeType[],
       edges: [] as Edge[],
       selectedNodeIds: [] as string[],
       selectedEdgeIds: [] as string[],
@@ -133,7 +133,7 @@ const useGraphStore = create<RFState>()(
           selectedNodeIds: nodes.map((x) => x.id),
         });
       },
-      setNodes: (nodes: RAGFlowNodeType[]) => {
+      setNodes: (nodes: LuminationNodeType[]) => {
         set({ nodes });
       },
       setEdges: (edges: Edge[]) => {
@@ -185,7 +185,7 @@ const useGraphStore = create<RFState>()(
           ]);
         }
       },
-      addNode: (node: RAGFlowNodeType) => {
+      addNode: (node: LuminationNodeType) => {
         set({ nodes: get().nodes.concat(node) });
       },
       updateNode: (node) => {
@@ -255,7 +255,7 @@ const useGraphStore = create<RFState>()(
         const { getNode, generateNodeName, nodes } = get();
         const node = getNode(id);
 
-        const iterationNode: RAGFlowNodeType = {
+        const iterationNode: LuminationNodeType = {
           ...(node || {}),
           data: {
             ...(node?.data || { label: Operator.Iteration, form: {} }),

@@ -1,10 +1,10 @@
 import { useFetchModelId } from '@/hooks/logic-hooks';
-import { RAGFlowNodeType } from '@/interfaces/database/flow';
+import { LuminationNodeType } from '@/interfaces/database/flow';
 import { get, isEmpty } from 'lodash';
 import { useMemo } from 'react';
 import { AgentExceptionMethod, initialAgentValues } from '../../constant';
 
-export function useValues(node?: RAGFlowNodeType) {
+export function useValues(node?: LuminationNodeType) {
   const llmId = useFetchModelId();
 
   const defaultValues = useMemo(

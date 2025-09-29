@@ -122,7 +122,7 @@ export enum FileMimeType {
   Json = 'application/json',
 }
 
-export const Domain = 'demo.ragflow.io';
+export const Domain = 'demo.lumination.ai';
 
 //#region file preview
 export const Images = [
@@ -145,7 +145,7 @@ export const SupportedPreviewDocumentTypes = [...ExceptiveType];
 //#endregion
 
 export enum Platform {
-  RAGFlow = 'RAGFlow',
+  Lumination = 'Lumination',
   Dify = 'Dify',
   FastGPT = 'FastGPT',
   Coze = 'Coze',

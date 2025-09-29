@@ -11,7 +11,7 @@ const Colors = [
   { from: '#633897', to: '#CBA1FF' },
 ];
 
-export const RAGFlowAvatar = forwardRef<
+export const LuminationAvatar = forwardRef<
   React.ElementRef<typeof AvatarPrimitive.Root>,
   React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Root> & {
     name?: string;
@@ -41,4 +41,4 @@ export const RAGFlowAvatar = forwardRef<
   );
 });
 
-RAGFlowAvatar.displayName = 'RAGFlowAvatar';
+LuminationAvatar.displayName = 'LuminationAvatar';

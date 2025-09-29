@@ -15,7 +15,10 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { RAGFlowSelect, RAGFlowSelectOptionType } from '@/components/ui/select';
+import {
+  LuminationSelect,
+  LuminationSelectOptionType,
+} from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { IModalProps } from '@/interfaces/common';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -72,7 +75,7 @@ function ParameterForm({
   });
 
   const options = useMemo(() => {
-    return Object.values(BeginQueryType).reduce<RAGFlowSelectOptionType[]>(
+    return Object.values(BeginQueryType).reduce<LuminationSelectOptionType[]>(
       (pre, cur) => {
         const Icon = BeginQueryTypeIconMap[cur];
 
@@ -131,7 +134,7 @@ function ParameterForm({
             <FormItem>
               <FormLabel>Type</FormLabel>
               <FormControl>
-                <RAGFlowSelect {...field} options={options} />
+                <LuminationSelect {...field} options={options} />
               </FormControl>
               <FormMessage />
             </FormItem>

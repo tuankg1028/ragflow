@@ -3,7 +3,7 @@ import {
   useResetAgent,
   useSetAgent,
 } from '@/hooks/use-agent-request';
-import { RAGFlowNodeType } from '@/interfaces/database/flow';
+import { LuminationNodeType } from '@/interfaces/database/flow';
 import { useDebounceEffect } from 'ahooks';
 import dayjs from 'dayjs';
 import { useCallback, useEffect, useState } from 'react';
@@ -18,7 +18,7 @@ export const useSaveGraph = () => {
   const { buildDslData } = useBuildDslData();
 
   const saveGraph = useCallback(
-    async (currentNodes?: RAGFlowNodeType[]) => {
+    async (currentNodes?: LuminationNodeType[]) => {
       return setAgent({
         id,
         title: data.title,
@@ -36,7 +36,7 @@ export const useSaveGraphBeforeOpeningDebugDrawer = (show: () => void) => {
   const { resetAgent } = useResetAgent();
 
   const handleRun = useCallback(
-    async (nextNodes?: RAGFlowNodeType[]) => {
+    async (nextNodes?: LuminationNodeType[]) => {
       const saveRet = await saveGraph(nextNodes);
       if (saveRet?.code === 0) {
         // Call the reset api before opening the run drawer each time

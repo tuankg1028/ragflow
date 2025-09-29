@@ -1,15 +1,15 @@
-import { RAGFlowNodeType } from '@/interfaces/database/flow';
+import { LuminationNodeType } from '@/interfaces/database/flow';
 import { FormInstance } from 'antd';
 
 export interface IOperatorForm {
   onValuesChange?(changedValues: any, values: any): void;
   form?: FormInstance;
-  node?: RAGFlowNodeType;
+  node?: LuminationNodeType;
   nodeId?: string;
 }
 
 export interface INextOperatorForm {
-  node?: RAGFlowNodeType;
+  node?: LuminationNodeType;
   nodeId?: string;
 }
 

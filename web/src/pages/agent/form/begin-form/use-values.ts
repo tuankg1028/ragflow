@@ -1,11 +1,11 @@
-import { RAGFlowNodeType } from '@/interfaces/database/flow';
+import { LuminationNodeType } from '@/interfaces/database/flow';
 import { isEmpty } from 'lodash';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AgentDialogueMode } from '../../constant';
 import { buildBeginInputListFromObject } from './utils';
 
-export function useValues(node?: RAGFlowNodeType) {
+export function useValues(node?: LuminationNodeType) {
   const { t } = useTranslation();
 
   const defaultValues = useMemo(

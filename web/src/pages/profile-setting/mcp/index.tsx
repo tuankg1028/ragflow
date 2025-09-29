@@ -1,7 +1,7 @@
 import { BulkOperateBar } from '@/components/bulk-operate-bar';
 import { Button } from '@/components/ui/button';
 import { SearchInput } from '@/components/ui/input';
-import { RAGFlowPagination } from '@/components/ui/ragflow-pagination';
+import { LuminationPagination } from '@/components/ui/lumination-pagination';
 import { useListMcpServer } from '@/hooks/use-mcp-request';
 import { pick } from 'lodash';
 import { Import, Plus } from 'lucide-react';
@@ -72,11 +72,11 @@ export default function McpServer() {
         ))}
       </section>
       <div className="mt-8 px-8">
-        <RAGFlowPagination
+        <LuminationPagination
           {...pick(pagination, 'current', 'pageSize')}
           total={pagination.total || 0}
           onChange={handlePageChange}
-        ></RAGFlowPagination>
+        ></LuminationPagination>
       </div>
       {editVisible && (
         <EditMcpDialog

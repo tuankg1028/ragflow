@@ -156,7 +156,7 @@ export type IKeywordNode = BaseNode;
 export type ICodeNode = BaseNode<ICodeForm>;
 export type IAgentNode = BaseNode;
 
-export type RAGFlowNodeType =
+export type LuminationNodeType =
   | IBeginNode
   | IRetrievalNode
   | IGenerateNode
@@ -176,6 +176,6 @@ export type RAGFlowNodeType =
   | IKeywordNode;
 
 export interface IGraph {
-  nodes: RAGFlowNodeType[];
+  nodes: LuminationNodeType[];
   edges: Edge[];
 }

@@ -1,10 +1,10 @@
-import { RAGFlowNodeType } from '@/interfaces/database/flow';
+import { LuminationNodeType } from '@/interfaces/database/flow';
 import { isEmpty } from 'lodash';
 import { useMemo } from 'react';
 
 export function useFormValues(
   defaultValues: Record<string, any>,
-  node?: RAGFlowNodeType,
+  node?: LuminationNodeType,
 ) {
   const values = useMemo(() => {
     const formData = node?.data?.form;

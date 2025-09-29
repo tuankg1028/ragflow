@@ -7,11 +7,11 @@ import { useBuildVariableOptions } from '../../hooks/use-get-begin-query';
 import { IInvokeVariable } from '../../interface';
 import { useHandleOperateParameters } from './hooks';
 
-import { RAGFlowNodeType } from '@/interfaces/database/flow';
+import { LuminationNodeType } from '@/interfaces/database/flow';
 import styles from './index.less';
 
 interface IProps {
-  node?: RAGFlowNodeType;
+  node?: LuminationNodeType;
 }
 
 const components = {

@@ -7,11 +7,14 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from '@/components/ui/pagination';
-import { RAGFlowSelect, RAGFlowSelectOptionType } from '@/components/ui/select';
+import {
+  LuminationSelect,
+  LuminationSelectOptionType,
+} from '@/components/ui/select';
 import { cn } from '@/lib/utils';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-export type RAGFlowPaginationType = {
+export type LuminationPaginationType = {
   showQuickJumper?: boolean;
   onChange?(page: number, pageSize: number): void;
   total?: number;
@@ -20,17 +23,17 @@ export type RAGFlowPaginationType = {
   showSizeChanger?: boolean;
 };
 
-export function RAGFlowPagination({
+export function LuminationPagination({
   current = 1,
   pageSize = 10,
   total = 0,
   onChange,
   showSizeChanger = true,
-}: RAGFlowPaginationType) {
+}: LuminationPaginationType) {
   const [currentPage, setCurrentPage] = useState(1);
   const [currentPageSize, setCurrentPageSize] = useState('10');
 
-  const sizeChangerOptions: RAGFlowSelectOptionType[] = useMemo(() => {
+  const sizeChangerOptions: LuminationSelectOptionType[] = useMemo(() => {
     return [10, 20, 50, 100].map((x) => ({
       label: <span>{x} / page</span>,
       value: x.toString(),
@@ -170,13 +173,17 @@ export function RAGFlowPagination({
         </PaginationContent>
       </Pagination>
       {showSizeChanger && (
-        <RAGFlowSelect
+        <LuminationSelect
           options={sizeChangerOptions}
           value={currentPageSize}
           onChange={handlePageSizeChange}
           triggerClassName="bg-background-header-bar"
-        ></RAGFlowSelect>
+        ></LuminationSelect>
       )}
     </section>
   );
 }
+
+// Backward compatibility exports
+export const RAGFlowPagination = LuminationPagination;
+export type RAGFlowPaginationType = LuminationPaginationType;

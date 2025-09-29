@@ -7,7 +7,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { RAGFlowSelect } from '@/components/ui/select';
+import { LuminationSelect } from '@/components/ui/select';
 import { useTranslate } from '@/hooks/common-hooks';
 import { INextOperatorForm } from '../../interface';
 import { LanguageOptions } from '../../options';
@@ -34,7 +34,7 @@ const WikipediaForm = ({ form, node }: INextOperatorForm) => {
             <FormItem>
               <FormLabel>{t('language')}</FormLabel>
               <FormControl>
-                <RAGFlowSelect {...field} options={LanguageOptions} />
+                <LuminationSelect {...field} options={LanguageOptions} />
               </FormControl>
               <FormMessage />
             </FormItem>

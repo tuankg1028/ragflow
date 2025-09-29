@@ -8,7 +8,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { RAGFlowSelect } from '@/components/ui/select';
+import { LuminationSelect } from '@/components/ui/select';
 import { useTranslation } from 'react-i18next';
 import { INextOperatorForm } from '../../interface';
 import { GoogleLanguageOptions } from '../../options';
@@ -48,11 +48,11 @@ const RewriteQuestionForm = ({ form }: INextOperatorForm) => {
                 {t('chat.language')}
               </FormLabel>
               <FormControl>
-                <RAGFlowSelect
+                <LuminationSelect
                   options={GoogleLanguageOptions}
                   allowClear={true}
                   {...field}
-                ></RAGFlowSelect>
+                ></LuminationSelect>
               </FormControl>
               <FormMessage />
             </FormItem>

@@ -1,11 +1,11 @@
-import { RAGFlowNodeType } from '@/interfaces/database/flow';
+import { LuminationNodeType } from '@/interfaces/database/flow';
 import { get, isEmpty, isPlainObject, omit } from 'lodash';
 import { useMemo, useRef } from 'react';
 import { Operator } from '../constant';
 import { buildCategorizeListFromObject, convertToObjectArray } from '../utils';
 import { useFormConfigMap } from './use-form-config-map';
 
-export function useValues(node?: RAGFlowNodeType, isDirty?: boolean) {
+export function useValues(node?: LuminationNodeType, isDirty?: boolean) {
   const operatorName: Operator = node?.data.label as Operator;
   const previousId = useRef<string | undefined>(node?.id);
 

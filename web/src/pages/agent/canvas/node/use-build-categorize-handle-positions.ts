@@ -1,5 +1,5 @@
 import { ICategorizeItemResult } from '@/interfaces/database/agent';
-import { RAGFlowNodeType } from '@/interfaces/database/flow';
+import { LuminationNodeType } from '@/interfaces/database/flow';
 import { useUpdateNodeInternals } from '@xyflow/react';
 import { get } from 'lodash';
 import { useEffect, useMemo } from 'react';
@@ -9,7 +9,7 @@ export const useBuildCategorizeHandlePositions = ({
   id,
 }: {
   id: string;
-  data: RAGFlowNodeType['data'];
+  data: LuminationNodeType['data'];
 }) => {
   const updateNodeInternals = useUpdateNodeInternals();
 

@@ -9,7 +9,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 // import { shallow } from 'zustand/shallow';
 import { settledModelVariableMap } from '@/constants/knowledge';
 import { useFetchModelId } from '@/hooks/logic-hooks';
-import { RAGFlowNodeType } from '@/interfaces/database/flow';
+import { LuminationNodeType } from '@/interfaces/database/flow';
 import { humanId } from 'human-id';
 import { get, lowerFirst, omit } from 'lodash';
 import { UseFormReturn } from 'react-hook-form';
@@ -431,7 +431,7 @@ export const useCopyPaste = () => {
     (event: ClipboardEvent) => {
       const nodes = JSON.parse(
         event.clipboardData?.getData('agent:nodes') || '[]',
-      ) as RAGFlowNodeType[] | undefined;
+      ) as LuminationNodeType[] | undefined;
 
       if (Array.isArray(nodes) && nodes.length) {
         event.preventDefault();
