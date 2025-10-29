@@ -91,6 +91,20 @@ class RedisDB:
         if self.REDIS.get(a) == b:
             return True
 
+    def info(self):
+        info = self.REDIS.info()
+        return {
+            'redis_version': info["redis_version"],
+            'server_mode': info["server_mode"],
+            'used_memory': info["used_memory_human"],
+            'total_system_memory': info["total_system_memory_human"],
+            'mem_fragmentation_ratio': info["mem_fragmentation_ratio"],
+            'connected_clients': info["connected_clients"],
+            'blocked_clients': info["blocked_clients"],
+            'instantaneous_ops_per_sec': info["instantaneous_ops_per_sec"],
+            'total_commands_processed': info["total_commands_processed"]
+        }
+
     def is_alive(self):
         return self.REDIS is not None
 
@@ -227,9 +241,20 @@ class RedisDB:
         """https://redis.io/docs/latest/commands/xreadgroup/"""
         for _ in range(3):
             try:
-                group_info = self.REDIS.xinfo_groups(queue_name)
-                if not any(gi["name"] == group_name for gi in group_info):
-                    self.REDIS.xgroup_create(queue_name, group_name, id="0", mkstream=True)
+
+                try:
+                    group_info = self.REDIS.xinfo_groups(queue_name)
+                    if not any(gi["name"] == group_name for gi in group_info):
+                        self.REDIS.xgroup_create(queue_name, group_name, id="0", mkstream=True)
+                except redis.exceptions.ResponseError as e:
+                    if "no such key" in str(e).lower():
+                        self.REDIS.xgroup_create(queue_name, group_name, id="0", mkstream=True)
+                    elif "busygroup" in str(e).lower():
+                        logging.warning("Group already exists, continue.")
+                        pass
+                    else:
+                        raise
+
                 args = {
                     "groupname": group_name,
                     "consumername": consumer_name,
@@ -325,7 +350,7 @@ class RedisDB:
 
     def delete_if_equal(self, key: str, expected_value: str) -> bool:
         """
-        Do follwing atomically:
+        Do following atomically:
         Delete a key if its value is equals to the given one, do nothing otherwise.
         """
         return bool(self.lua_delete_if_equal(keys=[key], args=[expected_value], client=self.REDIS))
@@ -338,8 +363,8 @@ class RedisDB:
             logging.warning("RedisDB.delete " + str(key) + " got exception: " + str(e))
             self.__open__()
         return False
-    
-    
+
+
 REDIS_CONN = RedisDB()
 
 

@@ -17,10 +17,11 @@ import { memo } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { z } from 'zod';
-import { INextOperatorForm } from '../../interface';
+import { BeginQuery, INextOperatorForm } from '../../interface';
 import { ParameterDialog } from '../begin-form/parameter-dialog';
 import { QueryTable } from '../begin-form/query-table';
 import { useEditQueryRecord } from '../begin-form/use-edit-query';
+import { Output } from '../components/output';
 import { useValues } from './use-values';
 import { useWatchFormChange } from './use-watch-change';
 
@@ -53,7 +54,15 @@ function UserFillUpForm({ node }: INextOperatorForm) {
 
   useWatchFormChange(node?.id, form);
 
-  const inputs = useWatch({ control: form.control, name: 'inputs' });
+  const inputs: BeginQuery[] = useWatch({
+    control: form.control,
+    name: 'inputs',
+  });
+
+  const outputList = inputs?.map((item) => ({
+    title: item.name,
+    type: item.type,
+  }));
 
   const {
     ok,
@@ -77,7 +86,7 @@ function UserFillUpForm({ node }: INextOperatorForm) {
           render={({ field }) => (
             <FormItem>
               <FormLabel tooltip={t('flow.openingSwitchTip')}>
-                Guiding Question
+                {t('flow.guidingQuestion')}
               </FormLabel>
               <FormControl>
                 <Switch
@@ -95,7 +104,9 @@ function UserFillUpForm({ node }: INextOperatorForm) {
           name={'tips'}
           render={({ field }) => (
             <FormItem>
-              <FormLabel tooltip={t('chat.setAnOpenerTip')}>Message</FormLabel>
+              <FormLabel tooltip={t('chat.setAnOpenerTip')}>
+                {t('flow.msg')}
+              </FormLabel>
               <FormControl>
                 <Textarea
                   rows={5}
@@ -149,6 +160,7 @@ function UserFillUpForm({ node }: INextOperatorForm) {
           ></ParameterDialog>
         )}
       </Form>
+      <Output list={outputList}></Output>
     </section>
   );
 }

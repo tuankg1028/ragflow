@@ -28,6 +28,7 @@ import {
 import { currentReg, replaceTextByOldReg } from '../utils';
 
 import classNames from 'classnames';
+import { omit } from 'lodash';
 import { pipe } from 'lodash/fp';
 import styles from './index.less';
 
@@ -47,8 +48,12 @@ const MarkdownContent = ({
   const { setDocumentIds, data: fileThumbnails } =
     useFetchDocumentThumbnailsByIds();
   const contentWithCursor = useMemo(() => {
-    // let text = DOMPurify.sanitize(content);
-    let text = content;
+    let text = DOMPurify.sanitize(content, {
+      ADD_TAGS: ['think', 'section'],
+      ADD_ATTR: ['class'],
+    });
+
+    // let text = content;
     if (text === '') {
       text = t('chat.searching');
     }
@@ -247,11 +252,12 @@ const MarkdownContent = ({
           'custom-typography': ({ children }: { children: string }) =>
             renderReference(children),
           code(props: any) {
-            const { children, className, node, ...rest } = props;
+            const { children, className, ...rest } = props;
+            const restProps = omit(rest, 'node');
             const match = /language-(\w+)/.exec(className || '');
             return match ? (
               <SyntaxHighlighter
-                {...rest}
+                {...restProps}
                 PreTag="div"
                 language={match[1]}
                 wrapLongLines
@@ -259,7 +265,10 @@ const MarkdownContent = ({
                 {String(children).replace(/\n$/, '')}
               </SyntaxHighlighter>
             ) : (
-              <code {...rest} className={classNames(className, 'text-wrap')}>
+              <code
+                {...restProps}
+                className={classNames(className, 'text-wrap')}
+              >
                 {children}
               </code>
             );

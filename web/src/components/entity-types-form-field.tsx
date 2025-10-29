@@ -12,13 +12,6 @@ import {
 type EntityTypesFormFieldProps = {
   name?: string;
 };
-const initialEntityTypes = [
-  'organization',
-  'person',
-  'geo',
-  'event',
-  'category',
-];
 export function EntityTypesFormField({
   name = 'parser_config.entity_types',
 }: EntityTypesFormFieldProps) {
@@ -29,12 +22,11 @@ export function EntityTypesFormField({
     <FormField
       control={form.control}
       name={name}
-      defaultValue={initialEntityTypes}
       render={({ field }) => {
         return (
           <FormItem className=" items-center space-y-0 ">
             <div className="flex items-center">
-              <FormLabel className="text-sm text-muted-foreground whitespace-nowrap w-1/4">
+              <FormLabel className="text-sm whitespace-nowrap w-1/4">
                 <span className="text-red-600">*</span> {t('entityTypes')}
               </FormLabel>
               <div className="w-3/4">

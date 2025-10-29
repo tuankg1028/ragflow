@@ -74,7 +74,6 @@ export type RFState = {
   deleteAgentDownstreamNodesById: (id: string) => void;
   deleteAgentToolNodeById: (id: string) => void;
   deleteIterationNodeById: (id: string) => void;
-  deleteEdgeBySourceAndSourceHandle: (connection: Partial<Connection>) => void;
   findNodeByName: (operatorName: Operator) => RAGFlowNodeType | undefined;
   updateMutableNodeFormItem: (id: string, field: string, value: any) => void;
   getOperatorTypeFromId: (id?: string | null) => string | undefined;
@@ -84,6 +83,13 @@ export type RFState = {
   setClickedNodeId: (id?: string) => void;
   setClickedToolId: (id?: string) => void;
   findUpstreamNodeById: (id?: string | null) => RAGFlowNodeType | undefined;
+  deleteEdgesBySourceAndSourceHandle: (
+    source: string,
+    sourceHandle: string,
+  ) => void; // Deleting a condition of a classification operator will delete the related edge
+  findAgentToolNodeById: (id: string | null) => string | undefined;
+  selectNodeIds: (nodeIds: string[]) => void;
+  hasChildNode: (nodeId: string) => boolean;
 };
 
 // this is our useStore hook that we can use in our components to get parts of the store and call actions
@@ -122,8 +128,9 @@ const useGraphStore = create<RFState>()(
       },
       onConnect: (connection: Connection) => {
         const { updateFormDataOnConnect } = get();
+        const newEdges = addEdge(connection, get().edges);
         set({
-          edges: addEdge(connection, get().edges),
+          edges: newEdges,
         });
         updateFormDataOnConnect(connection);
       },
@@ -199,6 +206,7 @@ const useGraphStore = create<RFState>()(
         set({ nodes: nextNodes });
       },
       getNode: (id?: string | null) => {
+        // console.log('getNode', id, get().nodes);
         return get().nodes.find((x) => x.id === id);
       },
       getOperatorTypeFromId: (id?: string | null) => {
@@ -307,14 +315,14 @@ const useGraphStore = create<RFState>()(
                 [sourceHandle as string]: undefined,
               });
               break;
-            case Operator.Categorize:
-              if (sourceHandle)
-                updateNodeForm(source, undefined, [
-                  'category_description',
-                  sourceHandle,
-                  'to',
-                ]);
-              break;
+            // case Operator.Categorize:
+            //   if (sourceHandle)
+            //     updateNodeForm(source, undefined, [
+            //       'category_description',
+            //       sourceHandle,
+            //       'to',
+            //     ]);
+            //   break;
             case Operator.Switch: {
               updateSwitchFormData(source, sourceHandle, target, false);
               break;
@@ -325,19 +333,6 @@ const useGraphStore = create<RFState>()(
         }
         set({
           edges: edges.filter((edge) => edge.id !== id),
-        });
-      },
-      deleteEdgeBySourceAndSourceHandle: ({
-        source,
-        sourceHandle,
-      }: Partial<Connection>) => {
-        const { edges } = get();
-        const nextEdges = edges.filter(
-          (edge) =>
-            edge.source !== source || edge.sourceHandle !== sourceHandle,
-        );
-        set({
-          edges: nextEdges,
         });
       },
       deleteNodeById: (id: string) => {
@@ -507,6 +502,35 @@ const useGraphStore = create<RFState>()(
         const { edges, getNode } = get();
         const edge = edges.find((x) => x.target === id);
         return getNode(edge?.source);
+      },
+      deleteEdgesBySourceAndSourceHandle: (source, sourceHandle) => {
+        const { edges, setEdges } = get();
+        setEdges(
+          edges.filter(
+            (edge) =>
+              !(edge.source === source && edge.sourceHandle === sourceHandle),
+          ),
+        );
+      },
+      findAgentToolNodeById: (id) => {
+        const { edges } = get();
+        return edges.find(
+          (edge) =>
+            edge.source === id && edge.sourceHandle === NodeHandleId.Tool,
+        )?.target;
+      },
+      selectNodeIds: (nodeIds) => {
+        const { nodes, setNodes } = get();
+        setNodes(
+          nodes.map((node) => ({
+            ...node,
+            selected: nodeIds.includes(node.id),
+          })),
+        );
+      },
+      hasChildNode: (nodeId) => {
+        const { edges } = get();
+        return edges.some((edge) => edge.source === nodeId);
       },
     })),
     { name: 'graph', trace: true },

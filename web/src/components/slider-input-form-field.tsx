@@ -1,6 +1,6 @@
 import { FormLayout } from '@/constants/form';
 import { cn } from '@/lib/utils';
-import { ReactNode } from 'react';
+import { ReactNode, useMemo } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { SingleFormSlider } from './ui/dual-range-slider';
 import {
@@ -10,7 +10,7 @@ import {
   FormLabel,
   FormMessage,
 } from './ui/form';
-import { Input } from './ui/input';
+import { NumberInput } from './ui/input';
 
 export type FormLayoutType = {
   layout?: FormLayout;
@@ -36,11 +36,11 @@ export function SliderInputFormField({
   tooltip,
   defaultValue,
   className,
-  layout = FormLayout.Vertical,
+  layout = FormLayout.Horizontal,
 }: SliderInputFormFieldProps) {
   const form = useFormContext();
 
-  const isHorizontal = layout === FormLayout.Horizontal;
+  const isHorizontal = useMemo(() => layout !== FormLayout.Vertical, [layout]);
 
   return (
     <FormField
@@ -49,13 +49,12 @@ export function SliderInputFormField({
       defaultValue={defaultValue || 0}
       render={({ field }) => (
         <FormItem
-          className={cn({ 'flex items-center space-y-0': isHorizontal })}
+          className={cn({ 'flex items-center gap-1 space-y-0': isHorizontal })}
         >
           <FormLabel
             tooltip={tooltip}
             className={cn({
-              'text-sm text-muted-foreground whitespace-nowrap w-1/4':
-                isHorizontal,
+              'text-sm whitespace-break-spaces w-1/4': isHorizontal,
             })}
           >
             {label}
@@ -79,19 +78,17 @@ export function SliderInputFormField({
               ></SingleFormSlider>
             </FormControl>
             <FormControl>
-              <Input
-                type={'number'}
-                className="h-7 w-20"
+              <NumberInput
+                className={cn(
+                  'h-6 w-10 p-0 text-center bg-bg-input border border-border-default text-text-secondary',
+                  '[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none',
+                )}
                 max={max}
                 min={min}
                 step={step}
                 {...field}
-                onChange={(ev) => {
-                  const value = ev.target.value;
-                  field.onChange(value === '' ? 0 : Number(value)); // convert to number
-                }}
                 // defaultValue={defaultValue}
-              ></Input>
+              ></NumberInput>
             </FormControl>
           </div>
           <FormMessage />

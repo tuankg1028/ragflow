@@ -1,12 +1,12 @@
 import { cn } from '@/lib/utils';
-import { ChevronDown } from 'lucide-react';
+import { Funnel } from 'lucide-react';
 import React, {
   ChangeEventHandler,
   PropsWithChildren,
   ReactNode,
   useMemo,
 } from 'react';
-import { IconFont } from '../icon-font';
+import { HomeIcon } from '../svg-icon';
 import { Button, ButtonProps } from '../ui/button';
 import { SearchInput } from '../ui/input';
 import { CheckboxFormMultipleProps, FilterPopover } from './filter-popover';
@@ -25,20 +25,20 @@ export const FilterButton = React.forwardRef<
 >(({ count = 0, ...props }, ref) => {
   return (
     <Button variant="secondary" {...props} ref={ref}>
-      <span
+      {/* <span
         className={cn({
-          'text-text-title': count > 0,
+          'text-text-primary': count > 0,
           'text-text-sub-title-invert': count === 0,
         })}
       >
         Filter
-      </span>
+      </span> */}
       {count > 0 && (
         <span className="rounded-full bg-text-badge px-1 text-xs ">
           {count}
         </span>
       )}
-      <ChevronDown />
+      <Funnel />
     </Button>
   );
 });
@@ -72,7 +72,8 @@ export default function ListFilterBar({
     <div className={cn('flex justify-between mb-5 items-center', className)}>
       <div className="text-2xl font-semibold flex items-center gap-2.5">
         {typeof icon === 'string' ? (
-          <IconFont name={icon} className="size-6"></IconFont>
+          // <IconFont name={icon} className="size-6"></IconFont>
+          <HomeIcon name={`${icon}`} width={'32'} />
         ) : (
           icon
         )}

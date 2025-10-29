@@ -1,7 +1,9 @@
 import { Collapse } from '@/components/collapse';
 import { Button, ButtonLoading } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogFooter,
   DialogHeader,
@@ -12,7 +14,7 @@ import { IModalProps } from '@/interfaces/common';
 import { IMCPTool, IMCPToolObject } from '@/interfaces/database/mcp';
 import { cn } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { isEmpty, pick } from 'lodash';
+import { isEmpty, omit, pick } from 'lodash';
 import { RefreshCw } from 'lucide-react';
 import {
   MouseEventHandler,
@@ -82,10 +84,14 @@ export function EditMcpDialog({
   }, []);
 
   const handleOk = async (values: z.infer<typeof FormSchema>) => {
+    const nextValues = {
+      ...omit(values, 'authorization_token'),
+      headers: { authorization_token: values.authorization_token },
+    };
     if (isTriggeredBySaving) {
-      onOk?.(values);
+      onOk?.(nextValues);
     } else {
-      const ret = await testMcpServer(values);
+      const ret = await testMcpServer(nextValues);
       if (ret.code === 0) {
         setFieldChanged(false);
       }
@@ -117,32 +123,44 @@ export function EditMcpDialog({
           form={form}
           setFieldChanged={setFieldChanged}
         ></EditMcpForm>
-        <Collapse
-          title={<div>{nextTools?.length || 0} tools available</div>}
-          open={collapseOpen}
-          onOpenChange={setCollapseOpen}
-          rightContent={
-            <Button
-              variant={'ghost'}
-              form={FormId}
-              type="submit"
-              onClick={handleTest}
+        <Card>
+          <CardContent className="p-3">
+            <Collapse
+              title={
+                <div>
+                  {nextTools?.length || 0} {t('mcp.toolsAvailable')}
+                </div>
+              }
+              open={collapseOpen}
+              onOpenChange={setCollapseOpen}
+              rightContent={
+                <Button
+                  variant={'transparent'}
+                  form={FormId}
+                  type="submit"
+                  onClick={handleTest}
+                  className="border-none p-0 hover:bg-transparent"
+                >
+                  <RefreshCw
+                    className={cn('text-text-secondary', {
+                      'animate-spin': testLoading,
+                    })}
+                  />
+                </Button>
+              }
             >
-              <RefreshCw
-                className={cn('text-background-checked', {
-                  'animate-spin': testLoading,
-                })}
-              />
-            </Button>
-          }
-        >
-          <div className="space-y-2.5 overflow-auto max-h-80">
-            {nextTools?.map((x) => (
-              <McpToolCard key={x.name} data={x}></McpToolCard>
-            ))}
-          </div>
-        </Collapse>
+              <div className="overflow-auto max-h-80 divide-y bg-bg-card rounded-md px-2.5">
+                {nextTools?.map((x) => (
+                  <McpToolCard key={x.name} data={x}></McpToolCard>
+                ))}
+              </div>
+            </Collapse>
+          </CardContent>
+        </Card>
         <DialogFooter>
+          <DialogClose asChild>
+            <Button variant="outline">{t('common.cancel')}</Button>
+          </DialogClose>
           <ButtonLoading
             type="submit"
             form={FormId}

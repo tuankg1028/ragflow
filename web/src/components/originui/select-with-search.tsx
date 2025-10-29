@@ -1,12 +1,15 @@
 'use client';
 
-import { CheckIcon, ChevronDownIcon } from 'lucide-react';
+import { CheckIcon, ChevronDownIcon, XIcon } from 'lucide-react';
 import {
   Fragment,
+  MouseEventHandler,
+  ReactNode,
   forwardRef,
   useCallback,
   useEffect,
   useId,
+  useMemo,
   useState,
 } from 'react';
 
@@ -25,53 +28,15 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
+import { t } from 'i18next';
 import { RAGFlowSelectOptionType } from '../ui/select';
-
-const countries = [
-  {
-    label: 'America',
-    options: [
-      { value: 'United States', label: '🇺🇸' },
-      { value: 'Canada', label: '🇨🇦' },
-      { value: 'Mexico', label: '🇲🇽' },
-    ],
-  },
-  {
-    label: 'Africa',
-    options: [
-      { value: 'South Africa', label: '🇿🇦' },
-      { value: 'Nigeria', label: '🇳🇬' },
-      { value: 'Morocco', label: '🇲🇦' },
-    ],
-  },
-  {
-    label: 'Asia',
-    options: [
-      { value: 'China', label: '🇨🇳' },
-      { value: 'Japan', label: '🇯🇵' },
-      { value: 'India', label: '🇮🇳' },
-    ],
-  },
-  {
-    label: 'Europe',
-    options: [
-      { value: 'United Kingdom', label: '🇬🇧' },
-      { value: 'France', label: '🇫🇷' },
-      { value: 'Germany', label: '🇩🇪' },
-    ],
-  },
-  {
-    label: 'Oceania',
-    options: [
-      { value: 'Australia', label: '🇦🇺' },
-      { value: 'New Zealand', label: '🇳🇿' },
-    ],
-  },
-];
+import { Separator } from '../ui/separator';
 
 export type SelectWithSearchFlagOptionType = {
-  label: string;
-  options: RAGFlowSelectOptionType[];
+  label: ReactNode;
+  value?: string;
+  disabled?: boolean;
+  options?: RAGFlowSelectOptionType[];
 };
 
 export type SelectWithSearchFlagProps = {
@@ -79,25 +44,83 @@ export type SelectWithSearchFlagProps = {
   value?: string;
   onChange?(value: string): void;
   triggerClassName?: string;
+  allowClear?: boolean;
+  disabled?: boolean;
+  placeholder?: string;
 };
+
+function findLabelWithoutOptions(
+  options: SelectWithSearchFlagOptionType[],
+  value: string,
+) {
+  return options.find((opt) => opt.value === value)?.label || '';
+}
+
+function findLabelWithOptions(
+  options: SelectWithSearchFlagOptionType[],
+  value: string,
+) {
+  return options
+    .map((group) => group?.options?.find((item) => item.value === value))
+    .filter(Boolean)[0]?.label;
+}
 
 export const SelectWithSearch = forwardRef<
   React.ElementRef<typeof Button>,
   SelectWithSearchFlagProps
 >(
   (
-    { value: val = '', onChange, options = countries, triggerClassName },
+    {
+      value: val = '',
+      onChange,
+      options = [],
+      triggerClassName,
+      allowClear = false,
+      disabled = false,
+      placeholder = t('common.selectPlaceholder'),
+    },
     ref,
   ) => {
     const id = useId();
     const [open, setOpen] = useState<boolean>(false);
     const [value, setValue] = useState<string>('');
 
+    const selectLabel = useMemo(() => {
+      if (options.every((x) => x.options === undefined)) {
+        return findLabelWithoutOptions(options, value);
+      } else if (options.every((x) => Array.isArray(x.options))) {
+        return findLabelWithOptions(options, value);
+      } else {
+        // Some have options, some don't
+        const optionsWithOptions = options.filter((x) =>
+          Array.isArray(x.options),
+        );
+        const optionsWithoutOptions = options.filter(
+          (x) => x.options === undefined,
+        );
+
+        const label = findLabelWithOptions(optionsWithOptions, value);
+        if (label) {
+          return label;
+        }
+        return findLabelWithoutOptions(optionsWithoutOptions, value);
+      }
+    }, [options, value]);
+
     const handleSelect = useCallback(
       (val: string) => {
         setValue(val);
         setOpen(false);
         onChange?.(val);
+      },
+      [onChange],
+    );
+
+    const handleClear: MouseEventHandler<SVGElement> = useCallback(
+      (e) => {
+        e.stopPropagation();
+        setValue('');
+        onChange?.('');
       },
       [onChange],
     );
@@ -115,31 +138,38 @@ export const SelectWithSearch = forwardRef<
             role="combobox"
             aria-expanded={open}
             ref={ref}
+            disabled={disabled}
             className={cn(
-              'bg-background hover:bg-background border-input w-full justify-between px-3 font-normal outline-offset-0 outline-none focus-visible:outline-[3px]',
+              '!bg-bg-input hover:bg-background border-input w-full  justify-between px-3 font-normal outline-offset-0 outline-none focus-visible:outline-[3px] [&_svg]:pointer-events-auto',
               triggerClassName,
             )}
           >
             {value ? (
               <span className="flex min-w-0 options-center gap-2">
-                <span className="text-lg leading-none truncate">
-                  {
-                    options
-                      .map((group) =>
-                        group.options.find((item) => item.value === value),
-                      )
-                      .filter(Boolean)[0]?.label
-                  }
-                </span>
+                <span className="leading-none truncate">{selectLabel}</span>
               </span>
             ) : (
-              <span className="text-muted-foreground">Select value</span>
+              <span className="text-muted-foreground">{placeholder}</span>
             )}
-            <ChevronDownIcon
-              size={16}
-              className="text-muted-foreground/80 shrink-0"
-              aria-hidden="true"
-            />
+            <div className="flex items-center justify-between">
+              {value && allowClear && (
+                <>
+                  <XIcon
+                    className="h-4 mx-2 cursor-pointer text-muted-foreground"
+                    onClick={handleClear}
+                  />
+                  <Separator
+                    orientation="vertical"
+                    className="flex min-h-6 h-full"
+                  />
+                </>
+              )}
+              <ChevronDownIcon
+                size={16}
+                className="text-muted-foreground/80 shrink-0 ml-2"
+                aria-hidden="true"
+              />
+            </div>
           </Button>
         </PopoverTrigger>
         <PopoverContent
@@ -147,30 +177,48 @@ export const SelectWithSearch = forwardRef<
           align="start"
         >
           <Command>
-            <CommandInput placeholder="Search ..." />
+            <CommandInput placeholder={t('common.search') + '...'} />
             <CommandList>
-              <CommandEmpty>No data found.</CommandEmpty>
-              {options.map((group) => (
-                <Fragment key={group.label}>
-                  <CommandGroup heading={group.label}>
-                    {group.options.map((option) => (
-                      <CommandItem
-                        key={option.value}
-                        value={option.value}
-                        onSelect={handleSelect}
-                      >
-                        <span className="text-lg leading-none">
-                          {option.label}
-                        </span>
+              <CommandEmpty>{t('common.noDataFound')}</CommandEmpty>
+              {options.map((group, idx) => {
+                if (group.options) {
+                  return (
+                    <Fragment key={idx}>
+                      <CommandGroup heading={group.label}>
+                        {group.options.map((option) => (
+                          <CommandItem
+                            key={option.value}
+                            value={option.value}
+                            disabled={option.disabled}
+                            onSelect={handleSelect}
+                          >
+                            <span className="leading-none">{option.label}</span>
 
-                        {value === option.value && (
-                          <CheckIcon size={16} className="ml-auto" />
-                        )}
-                      </CommandItem>
-                    ))}
-                  </CommandGroup>
-                </Fragment>
-              ))}
+                            {value === option.value && (
+                              <CheckIcon size={16} className="ml-auto" />
+                            )}
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </Fragment>
+                  );
+                } else {
+                  return (
+                    <CommandItem
+                      key={group.value}
+                      value={group.value}
+                      disabled={group.disabled}
+                      onSelect={handleSelect}
+                    >
+                      <span className="leading-none">{group.label}</span>
+
+                      {value === group.value && (
+                        <CheckIcon size={16} className="ml-auto" />
+                      )}
+                    </CommandItem>
+                  );
+                }
+              })}
             </CommandList>
           </Command>
         </PopoverContent>

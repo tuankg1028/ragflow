@@ -23,6 +23,7 @@ from io import BytesIO
 from rag.nlp import rag_tokenizer, tokenize, tokenize_table, bullets_category, title_frequency, tokenize_chunks, docx_question_level
 from rag.utils import num_tokens_from_string
 from deepdoc.parser import PdfParser, PlainParser, DocxParser
+from deepdoc.parser.figure_parser import vision_figure_parser_pdf_wrapper,vision_figure_parser_docx_wrapper
 from docx import Document
 from PIL import Image
 
@@ -45,9 +46,6 @@ class Pdf(PdfParser):
             callback
         )
         callback(msg="OCR finished ({:.2f}s)".format(timer() - start))
-        # for bb in self.boxes:
-        #    for b in bb:
-        #        print(b)
         logging.debug("OCR: {}".format(timer() - start))
 
         start = timer()
@@ -82,12 +80,21 @@ class Docx(DocxParser):
         img = paragraph._element.xpath('.//pic:pic')
         if not img:
             return None
-        img = img[0]
-        embed = img.xpath('.//a:blip/@r:embed')[0]
-        related_part = document.part.related_parts[embed]
-        image = related_part.image
-        image = Image.open(BytesIO(image.blob))
-        return image
+        try:
+            img = img[0]
+            embed = img.xpath('.//a:blip/@r:embed')[0]
+            related_part = document.part.related_parts[embed]
+            image = related_part.image
+            if image is not None:
+                image = Image.open(BytesIO(image.blob))
+                return image
+            elif related_part.blob is not None:
+                image = Image.open(BytesIO(related_part.blob))
+                return image
+            else:
+                return None
+        except Exception:
+            return None
 
     def concat_img(self, img1, img2):
         if img1 and not img2:
@@ -177,6 +184,9 @@ def chunk(filename, binary=None, from_page=0, to_page=100000,
     """
         Only pdf is supported.
     """
+    parser_config = kwargs.get(
+        "parser_config", {
+            "chunk_token_num": 512, "delimiter": "\n!?。；！？", "layout_recognize": "DeepDOC"})
     pdf_parser = None
     doc = {
         "docnm_kwd": filename
@@ -187,7 +197,7 @@ def chunk(filename, binary=None, from_page=0, to_page=100000,
     eng = lang.lower() == "english"  # pdf_parser.is_english
     if re.search(r"\.pdf$", filename, re.IGNORECASE):
         pdf_parser = Pdf()
-        if kwargs.get("layout_recognize", "DeepDOC") == "Plain Text":
+        if parser_config.get("layout_recognize", "DeepDOC") == "Plain Text":
             pdf_parser = PlainParser()
         sections, tbls = pdf_parser(filename if not binary else binary,
                                     from_page=from_page, to_page=to_page, callback=callback)
@@ -222,7 +232,6 @@ def chunk(filename, binary=None, from_page=0, to_page=100000,
             if lvl <= most_level and i > 0 and lvl != levels[i - 1]:
                 sid += 1
             sec_ids.append(sid)
-            # print(lvl, self.boxes[i]["text"], most_level, sid)
 
         sections = [(txt, sec_ids[i], poss)
                     for i, (txt, _, poss) in enumerate(sections)]
@@ -253,7 +262,7 @@ def chunk(filename, binary=None, from_page=0, to_page=100000,
             tk_cnt = num_tokens_from_string(txt)
             if sec_id > -1:
                 last_sid = sec_id
-
+        tbls=vision_figure_parser_pdf_wrapper(tbls=tbls,callback=callback,**kwargs)
         res = tokenize_table(tbls, doc, eng)
         res.extend(tokenize_chunks(chunks, doc, eng, pdf_parser))
         return res
@@ -262,6 +271,7 @@ def chunk(filename, binary=None, from_page=0, to_page=100000,
         docx_parser = Docx()
         ti_list, tbls = docx_parser(filename, binary,
                                     from_page=0, to_page=10000, callback=callback)
+        tbls=vision_figure_parser_docx_wrapper(sections=ti_list,tbls=tbls,callback=callback,**kwargs)
         res = tokenize_table(tbls, doc, eng)
         for text, image in ti_list:
             d = copy.deepcopy(doc)

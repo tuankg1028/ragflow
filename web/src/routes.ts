@@ -1,5 +1,8 @@
+import { IS_ENTERPRISE } from './pages/admin/utils';
+
 export enum Routes {
-  Login = '/login',
+  Root = '/',
+  Login = '/login-next',
   Logout = '/logout',
   Home = '/home',
   Datasets = '/datasets',
@@ -8,16 +11,20 @@ export enum Routes {
   Agent = '/agent',
   AgentTemplates = '/agent-templates',
   Agents = '/agents',
+  AgentList = '/agent-list',
   Searches = '/next-searches',
   Search = '/next-search',
+  SearchShare = '/next-search/share',
   Chats = '/next-chats',
   Chat = '/next-chat',
   Files = '/files',
   ProfileSetting = '/profile-setting',
   Profile = '/profile',
+  Api = '/api',
   Mcp = '/mcp',
   Team = '/team',
   Plan = '/plan',
+  System = '/system',
   Model = '/model',
   Prompt = '/prompt',
   ProfileMcp = `${ProfileSetting}${Mcp}`,
@@ -27,19 +34,33 @@ export enum Routes {
   ProfilePrompt = `${ProfileSetting}${Prompt}`,
   ProfileProfile = `${ProfileSetting}${Profile}`,
   DatasetTesting = '/testing',
-  DatasetSetting = '/setting',
   Chunk = '/chunk',
   ChunkResult = `${Chunk}${Chunk}`,
   Parsed = '/parsed',
   ParsedResult = `${Chunk}${Parsed}`,
   Result = '/result',
   ResultView = `${Chunk}${Result}`,
+  KnowledgeGraph = '/knowledge-graph',
+  AgentLogPage = '/agent-log-page',
+  AgentShare = '/agent/share',
+  ChatShare = `${Chats}/share`,
+  ChatWidget = `${Chats}/widget`,
+  UserSetting = '/user-setting',
+  DataSetOverview = '/dataset-overview',
+  DataSetSetting = '/dataset-setting',
+  DataflowResult = '/dataflow-result',
+  Admin = '/admin',
+  AdminServices = `${Admin}/services`,
+  AdminUserManagement = `${Admin}/users`,
+  AdminWhitelist = `${Admin}/whitelist`,
+  AdminRoles = `${Admin}/roles`,
+  AdminMonitoring = `${Admin}/monitoring`,
 }
 
 const routes = [
   {
     path: '/login',
-    component: '@/pages/login',
+    component: '@/pages/login-next',
     layout: false,
   },
   {
@@ -53,106 +74,78 @@ const routes = [
     layout: false,
   },
   {
-    path: '/',
+    path: Routes.ChatShare,
+    component: `@/pages${Routes.ChatShare}`,
+    layout: false,
+  },
+  {
+    path: Routes.AgentShare,
+    component: `@/pages${Routes.AgentShare}`,
+    layout: false,
+  },
+  {
+    path: Routes.ChatWidget,
+    component: `@/pages${Routes.ChatWidget}`,
+    layout: false,
+  },
+  {
+    path: Routes.Home,
     component: '@/layouts',
     layout: false,
-    wrappers: ['@/wrappers/auth'],
+    redirect: '/knowledge',
+  },
+  {
+    path: '/knowledge',
+    component: '@/pages/knowledge',
+  },
+  {
+    path: '/knowledge',
+    component: '@/pages/add-knowledge',
     routes: [
-      { path: '/', redirect: '/knowledge' },
       {
-        path: '/knowledge',
-        component: '@/pages/knowledge',
-        // component: '@/pages/knowledge/datasets',
-      },
-      {
-        path: '/knowledge',
-        component: '@/pages/add-knowledge',
+        path: 'dataset',
+        component: '@/pages/add-knowledge/components/knowledge-dataset',
         routes: [
           {
-            path: '/knowledge/dataset',
-            component: '@/pages/add-knowledge/components/knowledge-dataset',
-            routes: [
-              {
-                path: '/knowledge/dataset',
-                component: '@/pages/add-knowledge/components/knowledge-file',
-              },
-              {
-                path: '/knowledge/dataset/chunk',
-                component: '@/pages/add-knowledge/components/knowledge-chunk',
-              },
-            ],
+            path: '',
+            component: '@/pages/add-knowledge/components/knowledge-file',
           },
           {
-            path: '/knowledge/configuration',
-            component: '@/pages/add-knowledge/components/knowledge-setting',
-          },
-          {
-            path: '/knowledge/testing',
-            component: '@/pages/add-knowledge/components/knowledge-testing',
-          },
-          {
-            path: '/knowledge/knowledgeGraph',
-            component: '@/pages/add-knowledge/components/knowledge-graph',
+            path: 'chunk',
+            component: '@/pages/add-knowledge/components/knowledge-chunk',
           },
         ],
       },
       {
-        path: '/chat',
-        component: '@/pages/chat',
+        path: 'configuration',
+        component: '@/pages/add-knowledge/components/knowledge-setting',
       },
       {
-        path: '/user-setting',
-        component: '@/pages/user-setting',
-        routes: [
-          { path: '/user-setting', redirect: '/user-setting/profile' },
-          {
-            path: '/user-setting/profile',
-            // component: '@/pages/user-setting/setting-profile',
-            component: '@/pages/user-setting/setting-profile',
-          },
-          {
-            path: '/user-setting/locale',
-            component: '@/pages/user-setting/setting-locale',
-          },
-          {
-            path: '/user-setting/password',
-            component: '@/pages/user-setting/setting-password',
-          },
-          {
-            path: '/user-setting/model',
-            component: '@/pages/user-setting/setting-model',
-          },
-          {
-            path: '/user-setting/team',
-            component: '@/pages/user-setting/setting-team',
-          },
-          {
-            path: '/user-setting/system',
-            component: '@/pages/user-setting/setting-system',
-          },
-          {
-            path: '/user-setting/api',
-            component: '@/pages/user-setting/setting-api',
-          },
-        ],
+        path: 'testing',
+        component: '@/pages/add-knowledge/components/knowledge-testing',
       },
       {
-        path: '/file',
-        component: '@/pages/file-manager',
-      },
-      {
-        path: '/flow',
-        component: '@/pages/flow/list',
-      },
-      {
-        path: '/flow/:id',
-        component: '@/pages/flow',
-      },
-      {
-        path: '/search',
-        component: '@/pages/search',
+        path: 'knowledgeGraph',
+        component: '@/pages/add-knowledge/components/knowledge-graph',
       },
     ],
+  },
+
+  {
+    path: '/chat',
+    component: '@/pages/chat',
+  },
+  {
+    path: '/file',
+    component: '@/pages/file-manager',
+  },
+  {
+    path: Routes.AgentList,
+    component: `@/pages/${Routes.Agents}`,
+  },
+  {
+    path: '/search',
+    component: '@/pages/search',
   },
   {
     path: '/document/:id',
@@ -165,12 +158,13 @@ const routes = [
     layout: false,
   },
   {
-    path: Routes.Home,
+    path: Routes.Root,
     layout: false,
     component: '@/layouts/next',
+    wrappers: ['@/wrappers/auth'],
     routes: [
       {
-        path: Routes.Home,
+        path: Routes.Root,
         component: `@/pages${Routes.Home}`,
       },
     ],
@@ -198,7 +192,7 @@ const routes = [
     ],
   },
   {
-    path: Routes.Chat,
+    path: Routes.Chat + '/:id',
     layout: false,
     component: `@/pages${Routes.Chats}/chat`,
   },
@@ -214,9 +208,14 @@ const routes = [
     ],
   },
   {
-    path: Routes.Search,
+    path: `${Routes.Search}/:id`,
     layout: false,
     component: `@/pages${Routes.Search}`,
+  },
+  {
+    path: `${Routes.SearchShare}`,
+    layout: false,
+    component: `@/pages${Routes.SearchShare}`,
   },
   {
     path: Routes.Agents,
@@ -228,6 +227,11 @@ const routes = [
         component: `@/pages${Routes.Agents}`,
       },
     ],
+  },
+  {
+    path: `${Routes.AgentLogPage}/:id`,
+    layout: false,
+    component: `@/pages${Routes.Agents}${Routes.AgentLogPage}`,
   },
   {
     path: `${Routes.Agent}/:id`,
@@ -266,14 +270,27 @@ const routes = [
         component: `@/pages${Routes.Dataset}`,
       },
       {
-        path: `${Routes.DatasetBase}${Routes.DatasetSetting}/:id`,
-        component: `@/pages${Routes.DatasetBase}${Routes.DatasetSetting}`,
-      },
-      {
         path: `${Routes.DatasetBase}${Routes.DatasetTesting}/:id`,
         component: `@/pages${Routes.DatasetBase}${Routes.DatasetTesting}`,
       },
+      {
+        path: `${Routes.DatasetBase}${Routes.KnowledgeGraph}/:id`,
+        component: `@/pages${Routes.DatasetBase}${Routes.KnowledgeGraph}`,
+      },
+      {
+        path: `${Routes.DatasetBase}${Routes.DataSetOverview}/:id`,
+        component: `@/pages${Routes.DatasetBase}${Routes.DataSetOverview}`,
+      },
+      {
+        path: `${Routes.DatasetBase}${Routes.DataSetSetting}/:id`,
+        component: `@/pages${Routes.DatasetBase}${Routes.DataSetSetting}`,
+      },
     ],
+  },
+  {
+    path: `${Routes.DataflowResult}`,
+    layout: false,
+    component: `@/pages${Routes.DataflowResult}`,
   },
   {
     path: `${Routes.ParsedResult}/chunks`,
@@ -342,6 +359,97 @@ const routes = [
         path: Routes.ProfileMcp,
         component: `@/pages${Routes.ProfileMcp}`,
       },
+    ],
+  },
+  {
+    path: '/user-setting',
+    component: '@/pages/user-setting',
+    layout: false,
+    routes: [
+      { path: '/user-setting', redirect: '/user-setting/profile' },
+      {
+        path: '/user-setting/profile',
+        // component: '@/pages/user-setting/setting-profile',
+        component: '@/pages/user-setting/profile',
+      },
+      {
+        path: '/user-setting/locale',
+        component: '@/pages/user-setting/setting-locale',
+      },
+      {
+        path: '/user-setting/password',
+        component: '@/pages/user-setting/setting-password',
+      },
+      {
+        path: '/user-setting/model',
+        component: '@/pages/user-setting/setting-model',
+      },
+      {
+        path: '/user-setting/team',
+        component: '@/pages/user-setting/setting-team',
+      },
+      {
+        path: `/user-setting${Routes.System}`,
+        component: '@/pages/user-setting/setting-system',
+      },
+      {
+        path: `/user-setting${Routes.Api}`,
+        component: '@/pages/user-setting/setting-api',
+      },
+      {
+        path: `/user-setting${Routes.Mcp}`,
+        component: `@/pages${Routes.ProfileMcp}`,
+      },
+    ],
+  },
+
+  // Admin routes
+  {
+    path: Routes.Admin,
+    component: `@/pages/admin`,
+    layout: false,
+  },
+  {
+    path: `${Routes.AdminUserManagement}/:id`,
+    layout: false,
+    wrappers: ['@/wrappers/authAdmin'],
+    component: `@/pages/admin/user-detail`,
+  },
+  {
+    path: Routes.Admin,
+    component: `@/pages/admin/layout`,
+    layout: false,
+    routes: [
+      {
+        path: Routes.AdminServices,
+        component: `@/pages/admin/service-status`,
+        wrappers: ['@/wrappers/authAdmin'],
+      },
+      {
+        path: Routes.AdminUserManagement,
+        component: `@/pages/admin/users`,
+        wrappers: ['@/wrappers/authAdmin'],
+      },
+
+      ...(IS_ENTERPRISE
+        ? [
+            {
+              path: Routes.AdminWhitelist,
+              component: `@/pages/admin/whitelist`,
+              wrappers: ['@/wrappers/authAdmin'],
+            },
+            {
+              path: Routes.AdminRoles,
+              component: `@/pages/admin/roles`,
+              wrappers: ['@/wrappers/authAdmin'],
+            },
+            {
+              path: Routes.AdminMonitoring,
+              component: `@/pages/admin/monitoring`,
+              wrappers: ['@/wrappers/authAdmin'],
+            },
+          ]
+        : []),
     ],
   },
 ];
