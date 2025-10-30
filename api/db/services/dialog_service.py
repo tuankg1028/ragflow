@@ -255,7 +255,8 @@ def chat(dialog, messages, stream=True, **kwargs):
         if p["key"] not in kwargs:
             prompt_config["system"] = prompt_config["system"].replace("{%s}" % p["key"], " ")
 
-    if len(questions) > 1 and prompt_config.get("refine_multiturn"):
+    # if len(questions) > 1 and prompt_config.get("refine_multiturn"): // Khi hỏi câu đầu ko chạy vào refine prompt nên bỏ điều kiện len(questions) > 1
+    if prompt_config.get("refine_multiturn"):
         questions = [full_question(dialog.tenant_id, dialog.llm_id, messages, full_question_prompt=dialog.full_question_prompt)]
     else:
         questions = questions[-1:]
